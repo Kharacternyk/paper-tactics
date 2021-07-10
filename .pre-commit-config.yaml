@@ -1,0 +1,16 @@
+repos:
+
+  - repo: https://github.com/asottile/reorder_python_imports
+    rev: v2.4.0
+    hooks:
+      - id: reorder-python-imports
+
+  - repo: https://github.com/psf/black
+    rev: 20.8b1
+    hooks:
+      - id: black
+
+  - repo: https://gitlab.com/pyCQA/flake8
+    rev: 3.8.4
+    hooks:
+      - id: flake8
