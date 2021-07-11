@@ -33,7 +33,7 @@ class Game:
         if cell not in self.active_player.reachable:
             return False
 
-        if cell not in self.passive_player.units:
+        if cell in self.passive_player.units:
             self.passive_player.units.remove(cell)
             self.active_player.walls.add(cell)
         else:
@@ -57,6 +57,8 @@ class Game:
             new_sources = set()
             for x, y in sources:
                 for cell in adjacent_cells(x, y):
+                    if cell in sources:
+                        continue
                     if cell in self.active_player.walls:
                         new_sources.add(cell)
                     elif (
@@ -64,6 +66,18 @@ class Game:
                         and cell not in self.active_player.units
                     ):
                         self.active_player.reachable.add(cell)
-            sources = new_sources
-            if not sources:
+            if not new_sources:
                 break
+            sources.update(new_sources)
+
+    def __str__(self):
+        board = [[" " for j in range(10)] for i in range(10)]
+        for x, y in self.active_player.units:
+            board[x - 1][y - 1] = "*"
+        for x, y in self.active_player.walls:
+            board[x - 1][y - 1] = "#"
+        for x, y in self.passive_player.units:
+            board[x - 1][y - 1] = "o"
+        for x, y in self.passive_player.walls:
+            board[x - 1][y - 1] = "@"
+        return "\n".join("".join(row) for row in board)

@@ -1,5 +1,5 @@
+from hypothesis.strategies import composite
 from hypothesis.strategies import integers
-from hypothesis.strategies import lists
 from hypothesis.strategies import tuples
 
 import app.game
@@ -8,13 +8,14 @@ _integers = integers(min_value=1, max_value=10)
 cells = tuples(_integers, _integers)
 
 
-def _game_with_turns(turns):
+@composite
+def games(draw):
     game = app.game.Game()
-    for i in turns:
+    turn_number = draw(integers(min_value=0, max_value=200))
+    for i in range(turn_number):
         reachable = list(game.active_player.reachable)
-        game.make_turn(*reachable[i % len(reachable)])
-    game._turns = turns
+        if not reachable:
+            break
+        turn = reachable[draw(integers(min_value=0, max_value=len(reachable) - 1))]
+        game.make_turn(*turn)
     return game
-
-
-games = lists(integers(min_value=0, max_value=99)).map(_game_with_turns)
