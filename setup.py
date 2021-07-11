@@ -10,5 +10,7 @@ setup(
     packages=find_packages(),
     package_data={"paper-tactics": ["templates/*", "static/*"]},
     install_requires=["flask"],
-    tests_require=["pytest", "hypothesis"],
+    extras_require={
+        "tests": ["pytest", "hypothesis"],
+    },
 )
