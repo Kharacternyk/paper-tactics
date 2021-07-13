@@ -1,6 +1,6 @@
 { pkgs ? import <nixpkgs> { } }:
 
-pkgs.python3Packages.buildPythonPackage {
+pkgs.python3Packages.buildPythonApplication {
   name = "paper-tactics";
   src = ./.;
   propagatedBuildInputs = with pkgs; [
