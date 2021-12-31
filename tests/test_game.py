@@ -1,14 +1,14 @@
 from hypothesis import given
 from hypothesis import note
 
-import app.game
+import paper_tactics.game
 from .strategies import cells
 from .strategies import games
 
 
 @given(cells)
 def test_adjacent_gives_3_or_5_or_8_cells(cell):
-    adjacent = app.game.adjacent_cells(*cell)
+    adjacent = paper_tactics.game.adjacent_cells(*cell)
     assert len(list(adjacent)) in (3, 5, 8)
 
 
