@@ -1,16 +1,27 @@
 repos:
-
-  - repo: https://github.com/asottile/reorder_python_imports
-    rev: v2.4.0
+  - repo: local
     hooks:
       - id: reorder-python-imports
+        name: reorder-python-imports
+        language: system
+        entry: reorder-python-imports
+        types: [python]
 
-  - repo: https://github.com/psf/black
-    rev: 20.8b1
-    hooks:
       - id: black
+        name: black
+        language: system
+        entry: black
+        types: [python]
 
-  - repo: https://gitlab.com/pyCQA/flake8
-    rev: 3.8.4
-    hooks:
       - id: flake8
+        name: flake8
+        language: system
+        entry: flake8
+        types: [python]
+
+      - id: pytest
+        name: pytest
+        language: system
+        entry: pytest
+        types: [python]
+        pass_filenames: false
