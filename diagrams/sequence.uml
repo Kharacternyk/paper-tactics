@@ -1,0 +1,102 @@
+@startuml
+
+skinparam boxpadding 10
+
+participant Client as a <<(A,red)>>
+participant Client as b <<(B,lightblue)>>
+
+box API Gateway #lightcyan
+    participant "create-game" as lg <<(λ,orange)>>
+    participant "make-turn" as lt <<(λ,orange)>>
+end box
+
+box DynamoDB #lightgreen
+database "client-queue" as clients
+database "game-states" as games
+end box
+
+a -> lg ++ : {"action": "create-game"}
+lg -> clients : **get** *
+clients -> lg : []
+lg -> clients -- : **put** {"id": @connection-a}
+
+...
+
+b -> lg ++ : {"action": "create-game"}
+lg -> clients : **get** *
+clients -> lg : [{"id": @connection-a}]
+lg -> clients : **delete** @connection-a
+lg -> games : **put** {...} **(sane TTL)**
+note right
+{
+    "id": @game-a-b,
+    "players": {
+        @connection-a: {
+            "units": [
+                [1, 1]
+            ],
+            "walls": [],
+            "reachable": [
+                [1, 2], [2, 1], [2, 2]
+            ]
+        },
+        @connection-b: {
+            "units": [
+                [10, 10]
+            ],
+            "walls": []
+            "reachable": [
+                [9, 9], [9, 10], [10, 9]
+            ]
+        }
+    },
+    "active-player": @connection-a,
+    "passive-player": @connection-b,
+    "turns-left": 3
+}
+end note
+
+lg -> b : {...}
+lg -> a --
+note left
+{
+    "game-id": @game-a-b,
+    "turns-left": 3,
+    "self": {
+        "units": [
+            [1, 1]
+        ],
+        "walls": [],
+        "reachable": [
+            [1, 2], [2, 1], [2, 2]
+        ]
+    },
+    "opponent": {
+        "units": [
+            [10, 10]
+        ],
+        "walls": [],
+        "reachable": [
+            [9, 9], [9, 10], [10, 9]
+        ]
+    }
+}
+end note
+
+a -> lt ++
+note right
+{
+    "game-id": @game-a-b,
+    "action": "make-turn",
+    "cell": [1, 2]
+}
+end note
+
+lt -> games : **get** @game-a-b
+games -> lt : {...}
+lt -> games : **put** {...}
+lt -> a -- : {...}
+
+...
+
+@enduml
