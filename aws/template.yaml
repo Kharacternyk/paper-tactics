@@ -1,10 +1,9 @@
-AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 
 Globals:
   Function:
     Runtime: python3.8
-    CodeUri: .
+    CodeUri: src/
     MemorySize: 128
     Architectures:
       - arm64
@@ -13,53 +12,9 @@ Resources:
   WebSocketApi:
     Type: AWS::ApiGatewayV2::Api
     Properties:
-      Name: WebSocketApi
+      Name: paper-tactics-api
       ProtocolType: WEBSOCKET
       RouteSelectionExpression: $request.body.action
-
-  CreateGameRoute:
-    Type: AWS::ApiGatewayV2::Route
-    Properties:
-      ApiId: !Ref WebSocketApi
-      RouteKey: create-game
-      AuthorizationType: NONE
-      OperationName: CreateGameRoute
-      Target: !Join
-        - /
-        - - integrations
-          - !Ref CreateGameIntegration
-
-  CreateGameIntegration:
-    Type: AWS::ApiGatewayV2::Integration
-    Properties:
-      ApiId: !Ref WebSocketApi
-      IntegrationType: AWS_PROXY
-      IntegrationUri:
-        Fn::Sub:
-          arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateGameFunction.Arn}/invocations
-
-  CreateGameFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: create_game.handler
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: client-queue
-        - Statement:
-          - Effect: Allow
-            Action:
-              - execute-api:ManageConnections
-            Resource:
-              - !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WebSocketApi}/*
-
-  CreateGamePermission:
-    Type: AWS::Lambda::Permission
-    DependsOn:
-      - WebSocketApi
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !Ref CreateGameFunction
-      Principal: apigateway.amazonaws.com
 
   Deployment:
     Type: AWS::ApiGatewayV2::Deployment
@@ -79,7 +34,7 @@ Resources:
   ClientQueueTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: client-queue
+      TableName: paper-tactics-client-queue
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
         - AttributeName: connection-id
@@ -88,14 +43,54 @@ Resources:
         - AttributeName: connection-id
           KeyType: HASH
 
+  CreateGameRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketApi
+      RouteKey: create-game
+      AuthorizationType: NONE
+      Target: !Join
+        - /
+        - - integrations
+          - !Ref CreateGameIntegration
+
+  CreateGameIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WebSocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateGameFunction.Arn}/invocations
+
+  CreateGameFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: create_game.handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: paper-tactics-client-queue
+        - Statement:
+          - Effect: Allow
+            Action:
+              - execute-api:ManageConnections
+            Resource:
+              - !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WebSocketApi}/*
+
+  CreateGamePermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - WebSocketApi
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref CreateGameFunction
+      Principal: apigateway.amazonaws.com
+
 Outputs:
   WebSocketURI:
-    Value:
-      !Join 
-        - ''
-        - - wss://
-          - !Ref WebSocketApi
-          - .execute-api.
-          - !Ref AWS::Region
-          - .amazonaws.com/
-          - !Ref Stage
+    Value: !Join 
+      - ''
+      - - wss://
+        - !Ref WebSocketApi
+        - .execute-api.
+        - !Ref AWS::Region
+        - .amazonaws.com/
+        - !Ref Stage
