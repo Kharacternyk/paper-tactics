@@ -64,6 +64,7 @@ Resources:
   CreateGameFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: paper-tactics-create-game
       Handler: create_game.handler
       Policies:
         - DynamoDBCrudPolicy:
