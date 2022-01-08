@@ -71,9 +71,10 @@ Resources:
   Stage:
     Type: AWS::ApiGatewayV2::Stage
     Properties:
-      StageName: default
+      StageName: rolling
       DeploymentId: !Ref Deployment
       ApiId: !Ref WebSocketApi
+      AutoDeploy: true
 
   ClientQueueTable:
     Type: AWS::DynamoDB::Table
