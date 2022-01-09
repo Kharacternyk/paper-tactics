@@ -3,7 +3,7 @@ Transform: AWS::Serverless-2016-10-31
 Globals:
   Function:
     Runtime: python3.8
-    CodeUri: src/
+    CodeUri: lambda-functions/
     MemorySize: 128
     Architectures:
       - arm64
