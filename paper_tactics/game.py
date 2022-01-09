@@ -1,23 +1,30 @@
+from dataclasses import dataclass
+from dataclasses import field
+
+Cell = tuple[int, int]
+
+
+@dataclass
 class Player:
-    def __init__(self):
-        self.units = set()
-        self.walls = set()
-        self.reachable = set()
+    id: str = ""
+    units: set[Cell] = field(default_factory=set)
+    walls: set[Cell] = field(default_factory=set)
+    reachable: set[Cell] = field(default_factory=set)
 
 
+@dataclass
 class Game:
-    def __init__(self, size):
-        self.size = size
+    id: str = ""
+    size: int = 10
+    turns_left: int = 3
+    active_player: Player = field(default_factory=Player)
+    passive_player: Player = field(default_factory=Player)
 
-        self.active_player = Player()
+    def init_players(self):
         self.active_player.units.add((1, 1))
         self.active_player.reachable.update(self.adjacent_cells(1, 1))
-
-        self.passive_player = Player()
-        self.passive_player.units.add((size, size))
-        self.passive_player.reachable.update(self.adjacent_cells(size, size))
-
-        self.turns_left = 3
+        self.passive_player.units.add((self.size, self.size))
+        self.passive_player.reachable.update(self.adjacent_cells(self.size, self.size))
 
     def make_turn(self, x, y):
         cell = x, y
