@@ -1,7 +1,15 @@
+import json
+
 import boto3
+
+from paper_tactics.game import Game
+from paper_tactics.game_io import serialize_to_dynamodb_dict
+from paper_tactics.game_view import create_game_view_for_active_player
+from paper_tactics.game_view import create_game_view_for_passive_player
 
 dynamodb = boto3.resource("dynamodb")
 queue_table = dynamodb.Table("paper-tactics-client-queue")
+games_table = dynamodb.Table("paper-tactics-game-states")
 
 
 def handler(event, context):
@@ -24,23 +32,31 @@ def handler(event, context):
 
 
 def try_create_game(request_context, request_connection_id, queue_head_connection_id):
+    game = Game()
+    game.init_players()
+    active_player_view = create_game_view_for_active_player(game)
+    passive_player_view = create_game_view_for_passive_player(game)
+
     management_api = boto3.client(
         "apigatewaymanagementapi",
         endpoint_url=f"https://{request_context['domainName']}/"
         + request_context["stage"],
     )
+
     try:
-        management_api.post_to_connection(
-            Data=f"Game created with {request_connection_id}".encode(),
-            ConnectionId=queue_head_connection_id,
-        )
+        send_dict(management_api, queue_head_connection_id, active_player_view)
     except management_api.exceptions.GoneException:
         add_to_queue(request_connection_id)
     else:
-        management_api.post_to_connection(
-            Data=f"Game created with {queue_head_connection_id}".encode(),
-            ConnectionId=request_connection_id,
-        )
+        send_dict(management_api, request_connection_id, passive_player_view)
+        games_table.put_item(Item=serialize_to_dynamodb_dict(game))
+
+
+def send_dict(management_api, connection_id, data):
+    management_api.post_to_connection(
+        Data=json.dumps(data, separators=(",", ":")).encode(),
+        ConnectionId=connection_id,
+    )
 
 
 def add_to_queue(connection_id):

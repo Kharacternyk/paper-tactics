@@ -1,20 +1,24 @@
 from dataclasses import dataclass
 from dataclasses import field
+from typing import Set
+from typing import Tuple
+from uuid import uuid4
 
-Cell = tuple[int, int]
+Cell = Tuple[int, int]
+uuidHex = lambda: uuid4().hex
 
 
 @dataclass
 class Player:
-    id: str = ""
-    units: set[Cell] = field(default_factory=set)
-    walls: set[Cell] = field(default_factory=set)
-    reachable: set[Cell] = field(default_factory=set)
+    id: str = field(default_factory=uuidHex)
+    units: Set[Cell] = field(default_factory=set)
+    walls: Set[Cell] = field(default_factory=set)
+    reachable: Set[Cell] = field(default_factory=set)
 
 
 @dataclass
 class Game:
-    id: str = ""
+    id: str = field(default_factory=uuidHex)
     size: int = 10
     turns_left: int = 3
     active_player: Player = field(default_factory=Player)

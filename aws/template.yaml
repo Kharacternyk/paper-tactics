@@ -43,6 +43,21 @@ Resources:
         - AttributeName: connection-id
           KeyType: HASH
 
+  GameStatesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: paper-tactics-game-states
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      TimeToLiveSpecification:
+        Enabled: true
+        AttributeName: expiration-time
+
   CreateGameRoute:
     Type: AWS::ApiGatewayV2::Route
     Properties:
@@ -69,6 +84,8 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: paper-tactics-client-queue
+        - DynamoDBCrudPolicy:
+            TableName: paper-tactics-game-states
         - Statement:
           - Effect: Allow
             Action:
