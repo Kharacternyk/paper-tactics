@@ -1,6 +1,6 @@
 from hypothesis import given
 
-from .strategies import games
+from tests.strategies import games
 
 
 @given(games())

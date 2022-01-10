@@ -13,8 +13,8 @@ def create_game_view_for_active_player(game):
         "my-player-id": game.active_player.id,
         "my-turn": True,
         "turns-left": game.turns_left,
-        "me": create_player_view(game.active_player),
-        "opponent": create_player_view(game.passive_player),
+        "me": _create_player_view(game.active_player),
+        "opponent": _create_player_view(game.passive_player),
     }
 
 
@@ -24,18 +24,18 @@ def create_game_view_for_passive_player(game):
         "my-player-id": game.passive_player.id,
         "my-turn": False,
         "turns-left": game.turns_left,
-        "me": create_player_view(game.passive_player),
-        "opponent": create_player_view(game.active_player),
-    }
-
-
-def create_player_view(player):
-    return {
-        "units": list(player.units),
-        "walls": list(player.walls),
-        "reachable": list(player.reachable),
+        "me": _create_player_view(game.passive_player),
+        "opponent": _create_player_view(game.active_player),
     }
 
 
 def create_empty_view():
     return {}
+
+
+def _create_player_view(player):
+    return {
+        "units": list(player.units),
+        "walls": list(player.walls),
+        "reachable": list(player.reachable),
+    }

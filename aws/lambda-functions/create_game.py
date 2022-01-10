@@ -2,10 +2,10 @@ import json
 
 import boto3
 
-from paper_tactics.game import Game
-from paper_tactics.game_io import serialize_to_dynamodb_dict
-from paper_tactics.game_view import create_game_view_for_active_player
-from paper_tactics.game_view import create_game_view_for_passive_player
+from paper_tactics.game.model import Game
+from paper_tactics.game.serialization.dynamodb import serialize
+from paper_tactics.game.view import create_game_view_for_active_player
+from paper_tactics.game.view import create_game_view_for_passive_player
 
 dynamodb = boto3.resource("dynamodb")
 queue_table = dynamodb.Table("paper-tactics-client-queue")
@@ -49,7 +49,7 @@ def try_create_game(request_context, request_connection_id, queue_head_connectio
         add_to_queue(request_connection_id)
     else:
         send_dict(management_api, request_connection_id, passive_player_view)
-        games_table.put_item(Item=serialize_to_dynamodb_dict(game))
+        games_table.put_item(Item=serialize(game))
 
 
 def send_dict(management_api, connection_id, data):

@@ -1,7 +1,7 @@
 from hypothesis.strategies import composite
 from hypothesis.strategies import integers
 
-from paper_tactics.game import Game
+from paper_tactics.game.model import Game
 
 
 @composite
