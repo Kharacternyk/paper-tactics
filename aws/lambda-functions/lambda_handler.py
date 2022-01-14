@@ -4,9 +4,11 @@ import boto3
 
 
 def lambda_handler(handler):
+    resources = Resources()
+
     def decorated_handler(event_dict, context):
         event = Event(event_dict)
-        resources = Resources(event_dict)
+        resources.event_dict = event_dict
 
         handler(event, resources)
 
@@ -21,17 +23,17 @@ class Event:
 
 
 class Resources:
-    def __init__(self, event_dict):
-        self._event_dict = event_dict
+    def __init__(self):
+        self.event_dict = {}
         self._cache = {}
 
     @property
     def connection_manager(self):
         url = (
             "https://"
-            + self._event_dict["requestContext"]["domainName"]
+            + self.event_dict["requestContext"]["domainName"]
             + "/"
-            + self._event_dict["requestContext"]["stage"]
+            + self.event_dict["requestContext"]["stage"]
         )
 
         return self._get("connection_manager", lambda: ConnectionManager(url))
