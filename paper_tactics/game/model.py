@@ -33,7 +33,7 @@ class Game:
     def make_turn(self, x, y):
         cell = x, y
         if cell not in self.active_player.reachable:
-            return False
+            raise ValueError("Unreachable cell")
 
         if cell in self.passive_player.units:
             self.passive_player.units.remove(cell)
@@ -44,8 +44,6 @@ class Game:
 
         self._rebuild_reachable_set(self.active_player, self.passive_player)
         self._decrement_turns()
-
-        return True
 
     def get_adjacent_cells(self, x, y):
         for x_ in (x - 1, x, x + 1):

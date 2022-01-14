@@ -18,8 +18,8 @@ def serialize(game):
 def deserialize(source):
     return Game(
         id=source["id"],
-        size=source["size"],
-        turns_left=source["turns-left"],
+        size=int(source["size"]),
+        turns_left=int(source["turns-left"]),
         active_player=_deserialize_player(source["active-player"]),
         passive_player=_deserialize_player(source["passive-player"]),
     )
@@ -37,9 +37,9 @@ def _serialize_player(player):
 def _deserialize_player(source):
     return Player(
         id=source["id"],
-        units=set(source["units"]),
-        walls=set(source["walls"]),
-        reachable=set(source["reachable"]),
+        units=set((int(x), int(y)) for x, y in source["units"]),
+        walls=set((int(x), int(y)) for x, y in source["walls"]),
+        reachable=set((int(x), int(y)) for x, y in source["reachable"]),
     )
 
 
