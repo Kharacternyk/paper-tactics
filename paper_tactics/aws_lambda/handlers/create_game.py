@@ -1,7 +1,6 @@
-from lambda_handler import Event
-from lambda_handler import lambda_handler
-from lambda_handler import Resources
-
+from paper_tactics.aws_lambda.event import LambdaEvent
+from paper_tactics.aws_lambda.handler import lambda_handler
+from paper_tactics.aws_lambda.resources import LambdaResources
 from paper_tactics.game.model import Game
 from paper_tactics.game.model import Player
 from paper_tactics.game.serialization.dynamodb import serialize
@@ -9,7 +8,7 @@ from paper_tactics.game.view import create_game_view
 
 
 @lambda_handler
-def handler(event: Event, resources: Resources):
+def handler(event: LambdaEvent, resources: LambdaResources):
     queue = resources.queue_table.scan(ConsistentRead=True)
 
     if queue["Count"]:
