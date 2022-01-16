@@ -1,39 +1,31 @@
 from dataclasses import dataclass
 from dataclasses import field
+from typing import Iterable
 from uuid import uuid4
 
-Cell = tuple[int, int]
-uuidHex = lambda: uuid4().hex
-
-
-@dataclass
-class Player:
-    id: str = field(default_factory=uuidHex)
-    units: set[Cell] = field(default_factory=set)
-    walls: set[Cell] = field(default_factory=set)
-    reachable: set[Cell] = field(default_factory=set)
+from paper_tactics.entities.cell import Cell
+from paper_tactics.entities.player import Player
 
 
 @dataclass
 class Game:
-    id: str = field(default_factory=uuidHex)
+    id: str = field(default_factory=lambda: uuid4().hex)
     size: int = 10
     turns_left: int = 3
     active_player: Player = field(default_factory=Player)
     passive_player: Player = field(default_factory=Player)
 
-    def init_players(self):
+    def init_players(self) -> None:
         self.active_player.units.add((1, 1))
-        self.active_player.reachable.update(self.get_adjacent_cells(1, 1))
+        self.active_player.reachable.update(self.get_adjacent_cells((1, 1)))
         self.passive_player.units.add((self.size, self.size))
         self.passive_player.reachable.update(
-            self.get_adjacent_cells(self.size, self.size)
+            self.get_adjacent_cells((self.size, self.size))
         )
 
-    def make_turn(self, x, y):
-        cell = x, y
+    def make_turn(self, cell: Cell) -> None:
         if cell not in self.active_player.reachable:
-            raise ValueError("Unreachable cell")
+            raise IllegalTurnException("Unreachable cell")
 
         if cell in self.passive_player.units:
             self.passive_player.units.remove(cell)
@@ -45,22 +37,24 @@ class Game:
         self._rebuild_reachable_set(self.active_player, self.passive_player)
         self._decrement_turns()
 
-    def get_adjacent_cells(self, x, y):
+    def get_adjacent_cells(self, cell: Cell) -> Iterable[Cell]:
+        x, y = cell
         for x_ in (x - 1, x, x + 1):
             for y_ in (y - 1, y, y + 1):
-                if self.is_valid_cell(x_, y_) and (x_ != x or y_ != y):
+                if self.is_valid_cell((x_, y_)) and (x_ != x or y_ != y):
                     yield x_, y_
 
-    def is_valid_cell(self, x, y):
+    def is_valid_cell(self, cell: Cell) -> bool:
+        x, y = cell
         return 1 <= x <= self.size and 1 <= y <= self.size
 
-    def _rebuild_reachable_set(self, player, opponent):
+    def _rebuild_reachable_set(self, player: Player, opponent: Player) -> None:
         player.reachable.clear()
         sources = player.units.copy()
         while True:
             new_sources = set()
-            for x, y in sources:
-                for cell in self.get_adjacent_cells(x, y):
+            for source in sources:
+                for cell in self.get_adjacent_cells(source):
                     if cell in sources:
                         continue
                     if cell in player.walls:
@@ -71,7 +65,7 @@ class Game:
                 break
             sources.update(new_sources)
 
-    def _decrement_turns(self):
+    def _decrement_turns(self) -> None:
         self.turns_left -= 1
         if not self.turns_left:
             self.active_player, self.passive_player = (
@@ -80,7 +74,7 @@ class Game:
             )
             self.turns_left = 3
 
-    def __str__(self):
+    def __str__(self) -> str:
         board = [[" " for j in range(self.size)] for i in range(self.size)]
         for x, y in self.active_player.units:
             board[x - 1][y - 1] = "o"
@@ -91,3 +85,7 @@ class Game:
         for x, y in self.passive_player.walls:
             board[x - 1][y - 1] = "X"
         return "\n".join("".join(row) for row in board)
+
+
+class IllegalTurnException(Exception):
+    pass

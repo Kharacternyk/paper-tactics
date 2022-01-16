@@ -3,7 +3,7 @@ Transform: AWS::Serverless-2016-10-31
 Globals:
   Function:
     Runtime: python3.9
-    CodeUri: src/
+    CodeUri: lambda-handlers/
     MemorySize: 128
     Architectures:
       - arm64
@@ -42,6 +42,9 @@ Resources:
       KeySchema:
         - AttributeName: connection-id
           KeyType: HASH
+      TimeToLiveSpecification:
+        Enabled: true
+        AttributeName: expiration-time
 
   GameStatesTable:
     Type: AWS::DynamoDB::Table

@@ -1,11 +1,11 @@
 from hypothesis.strategies import composite
 from hypothesis.strategies import integers
 
-from paper_tactics.game.model import Game
+from paper_tactics.entities.game import Game
 
 
 @composite
-def games(draw):
+def games(draw) -> Game:
     size = draw(integers(min_value=2, max_value=7))
     turn_number = draw(integers(min_value=0, max_value=size * size * 2))
 
@@ -19,6 +19,6 @@ def games(draw):
             break
 
         turn = reachable[draw(integers(min_value=0, max_value=len(reachable) - 1))]
-        game.make_turn(*turn)
+        game.make_turn(turn)
 
     return game
