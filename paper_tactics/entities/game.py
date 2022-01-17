@@ -23,9 +23,12 @@ class Game:
             self.get_adjacent_cells((self.size, self.size))
         )
 
-    def make_turn(self, cell: Cell) -> None:
-        if cell not in self.active_player.reachable:
-            raise IllegalTurnException("Unreachable cell")
+    def make_turn(self, player_id: str, cell: Cell) -> None:
+        if (
+            player_id != self.active_player.id
+            or cell not in self.active_player.reachable
+        ):
+            raise IllegalTurnException(self.id, player_id, cell)
 
         if cell in self.passive_player.units:
             self.passive_player.units.remove(cell)

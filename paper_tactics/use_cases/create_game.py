@@ -1,6 +1,7 @@
 from paper_tactics.entities.game import Game
 from paper_tactics.entities.player import Player
 from paper_tactics.ports.game_repository import GameRepository
+from paper_tactics.ports.logger import Logger
 from paper_tactics.ports.player_notifier import PlayerGoneException
 from paper_tactics.ports.player_notifier import PlayerNotifier
 from paper_tactics.ports.player_queue import PlayerQueue
@@ -10,6 +11,7 @@ def create_game(
     game_repository: GameRepository,
     player_queue: PlayerQueue,
     player_notifier: PlayerNotifier,
+    logger: Logger,
     player_id: str,
 ) -> None:
     queued_player_id = player_queue.pop()
@@ -26,13 +28,13 @@ def create_game(
 
     try:
         player_notifier.notify(queued_player_id, game)
-    except PlayerGoneException:
+    except PlayerGoneException as e:
         player_queue.put(player_id)
-        return
+        return logger.log_exception(e)
 
     try:
         player_notifier.notify(player_id, game)
-    except PlayerGoneException:
-        return
+    except PlayerGoneException as e:
+        return logger.log_exception(e)
 
     game_repository.store(game)

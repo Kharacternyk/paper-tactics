@@ -4,6 +4,7 @@ from typing import Optional
 from paper_tactics.entities.game import Game
 from paper_tactics.ports.game_repository import GameRepository
 from paper_tactics.ports.game_repository import NoSuchGameException
+from paper_tactics.ports.logger import Logger
 from paper_tactics.ports.player_notifier import PlayerGoneException
 from paper_tactics.ports.player_notifier import PlayerNotifier
 from paper_tactics.ports.player_queue import PlayerQueue
@@ -51,3 +52,11 @@ class MockedGameRepository(GameRepository):
         if game_id in self.stored_games:
             return self.stored_games[game_id]
         raise NoSuchGameException(game_id)
+
+
+class MockedLogger(Logger):
+    def __init__(self):
+        self.log = []
+
+    def log_exception(self, exception: Exception) -> None:
+        self.log.append(exception)

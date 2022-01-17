@@ -4,6 +4,7 @@ from paper_tactics.adapters.aws_api_gateway_player_notifier import (
     AwsApiGatewayPlayerNotifier,
 )
 from paper_tactics.adapters.dynamodb_game_repository import DynamodbGameRepository
+from paper_tactics.adapters.stdout_logger import StdoutLogger
 from paper_tactics.use_cases.make_turn import make_turn
 
 game_repository = DynamodbGameRepository(
@@ -12,6 +13,7 @@ game_repository = DynamodbGameRepository(
     "expiration-time",
     600,
 )
+logger = StdoutLogger()
 
 
 def handler(event, context):
@@ -23,13 +25,14 @@ def handler(event, context):
     )
 
     try:
+        player_id = event["requestContext"]["connectionId"]
         body = json.loads(event["body"])
-        game_id = body["game_id"]
-        player_id = body["player_id"]
+        game_id = body["gameId"]
         cell = tuple(body["cell"])
         assert len(cell) == 2
-    except Exception:
+    except Exception as e:
+        logger.log_exception(e)
         return {"statusCode": 400}
 
-    make_turn(game_repository, player_notifier, game_id, player_id, cell)
+    make_turn(game_repository, player_notifier, logger, game_id, player_id, cell)
     return {"statusCode": 200}

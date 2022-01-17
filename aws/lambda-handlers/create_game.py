@@ -3,6 +3,7 @@ from paper_tactics.adapters.aws_api_gateway_player_notifier import (
 )
 from paper_tactics.adapters.dynamodb_game_repository import DynamodbGameRepository
 from paper_tactics.adapters.dynamodb_player_queue import DynamodbPlayerQueue
+from paper_tactics.adapters.stdout_logger import StdoutLogger
 from paper_tactics.use_cases.create_game import create_game
 
 player_queue = DynamodbPlayerQueue(
@@ -17,6 +18,7 @@ game_repository = DynamodbGameRepository(
     "expiration-time",
     600,
 )
+logger = StdoutLogger()
 
 
 def handler(event, context):
@@ -29,9 +31,10 @@ def handler(event, context):
 
     try:
         player_id = event["requestContext"]["connectionId"]
-    except KeyError:
+    except KeyError as e:
+        logger.log_exception(e)
         return {"statusCode": 400}
 
-    create_game(game_repository, player_queue, player_notifier, player_id)
+    create_game(game_repository, player_queue, player_notifier, logger, player_id)
 
     return {"statusCode": 200}

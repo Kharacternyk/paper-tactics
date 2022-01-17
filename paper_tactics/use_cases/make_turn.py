@@ -2,6 +2,7 @@ from paper_tactics.entities.cell import Cell
 from paper_tactics.entities.game import IllegalTurnException
 from paper_tactics.ports.game_repository import GameRepository
 from paper_tactics.ports.game_repository import NoSuchGameException
+from paper_tactics.ports.logger import Logger
 from paper_tactics.ports.player_notifier import PlayerGoneException
 from paper_tactics.ports.player_notifier import PlayerNotifier
 
@@ -9,43 +10,41 @@ from paper_tactics.ports.player_notifier import PlayerNotifier
 def make_turn(
     game_repository: GameRepository,
     player_notifier: PlayerNotifier,
+    logger: Logger,
     game_id: str,
     player_id: str,
     cell: Cell,
 ) -> None:
     try:
         game = game_repository.fetch(game_id)
-    except NoSuchGameException:
-        return
-
-    if game.active_player.id != player_id:
-        return
+    except NoSuchGameException as e:
+        return logger.log_exception(e)
 
     try:
-        game.make_turn(cell)
-    except IllegalTurnException:
-        return
+        game.make_turn(player_id, cell)
+    except IllegalTurnException as e:
+        return logger.log_exception(e)
 
     try:
         player_notifier.notify(game.active_player.id, game)
-    except PlayerGoneException:
+    except PlayerGoneException as e:
         game.active_player.reachable = set()
         game_repository.store(game)
         try:
             player_notifier.notify(game.passive_player.id, game)
         except PlayerGoneException:
             pass
-        return
+        return logger.log_exception(e)
 
     try:
         player_notifier.notify(game.passive_player.id, game)
-    except PlayerGoneException:
+    except PlayerGoneException as e:
         game.passive_player.reachable = set()
         game_repository.store(game)
         try:
             player_notifier.notify(game.active_player.id, game)
         except PlayerGoneException:
             pass
-        return
+        return logger.log_exception(e)
 
     game_repository.store(game)

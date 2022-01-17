@@ -19,6 +19,6 @@ def games(draw) -> Game:
             break
 
         turn = reachable[draw(integers(min_value=0, max_value=len(reachable) - 1))]
-        game.make_turn(turn)
+        game.make_turn(game.active_player.id, turn)
 
     return game
