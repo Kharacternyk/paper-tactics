@@ -35,7 +35,8 @@ class AwsApiGatewayPlayerNotifier(PlayerNotifier):
 
     def _create_game_view_for_active_player(self, game: Game) -> dict:
         return {
-            "gameId": game.id,
+            "id": game.id,
+            "size": game.size,
             "myTurn": True,
             "turnsLeft": game.turns_left,
             "me": self._create_player_view(game.active_player),
@@ -44,7 +45,8 @@ class AwsApiGatewayPlayerNotifier(PlayerNotifier):
 
     def _create_game_view_for_passive_player(self, game: Game) -> dict:
         return {
-            "gameId": game.id,
+            "id": game.id,
+            "size": game.size,
             "myTurn": False,
             "turnsLeft": game.turns_left,
             "me": self._create_player_view(game.passive_player),
