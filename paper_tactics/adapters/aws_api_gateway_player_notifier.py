@@ -58,4 +58,5 @@ class AwsApiGatewayPlayerNotifier(PlayerNotifier):
             "units": list(player.units),
             "walls": list(player.walls),
             "reachable": list(player.reachable),
+            "has_lost": player.has_lost,
         }

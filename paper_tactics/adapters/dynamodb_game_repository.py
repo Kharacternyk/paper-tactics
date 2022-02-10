@@ -49,6 +49,7 @@ class DynamodbGameRepository(GameRepository):
             "units": list(player.units),
             "walls": list(player.walls),
             "reachable": list(player.reachable),
+            "has_lost": player.has_lost,
         }
 
     def _deserialize_player(self, source: dict) -> Player:
@@ -57,6 +58,7 @@ class DynamodbGameRepository(GameRepository):
             units=set((int(x), int(y)) for x, y in source["units"]),
             walls=set((int(x), int(y)) for x, y in source["walls"]),
             reachable=set((int(x), int(y)) for x, y in source["reachable"]),
+            has_lost=source["has_lost"],
         )
 
     def _get_expiration_time(self):

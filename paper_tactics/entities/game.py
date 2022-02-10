@@ -68,6 +68,9 @@ class Game:
                 break
             sources.update(new_sources)
 
+        if not player.reachable:
+            player.has_lost = True
+
     def _decrement_turns(self) -> None:
         self.turns_left -= 1
         if not self.turns_left:
