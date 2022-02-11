@@ -2,8 +2,10 @@ from hypothesis import given
 
 from tests.entities.strategies import games
 
+_games = games(shallow=True)
 
-@given(games())
+
+@given(_games)
 def test_units_and_walls_do_not_overlap(game):
     sets = (
         game.active_player.units,
@@ -16,19 +18,19 @@ def test_units_and_walls_do_not_overlap(game):
             assert a is b or a.isdisjoint(b)
 
 
-@given(games())
+@given(_games)
 def test_own_walls_and_units_are_not_reachable(game):
     for player in game.active_player, game.passive_player:
         assert player.reachable.isdisjoint(player.units.union(player.walls))
 
 
-@given(games())
+@given(_games)
 def test_opponents_walls_are_not_reachable(game):
     players = game.active_player, game.passive_player
     for player, opponent in zip(players, reversed(players)):
         assert player.reachable.isdisjoint(opponent.walls)
 
 
-@given(games())
+@given(_games)
 def test_unit_advantage_is_no_more_than_3(game):
     assert abs(len(game.active_player.units) - len(game.passive_player.units)) <= 3

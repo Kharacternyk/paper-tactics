@@ -7,12 +7,14 @@ from hypothesis.strategies import integers
 from hypothesis.strategies import text
 
 from paper_tactics.adapters.dynamodb_game_repository import DynamodbGameRepository
-from paper_tactics.adapters.dynamodb_player_queue import DynamodbPlayerQueue
+from paper_tactics.adapters.dynamodb_match_request_queue import (
+    DynamodbMatchRequestQueue,
+)
 
 
 @composite
-def dynamodb_player_queues(draw) -> DynamodbPlayerQueue:
-    return DynamodbPlayerQueue(*draw(_dynamodb_tables()))
+def dynamodb_match_request_queues(draw) -> DynamodbMatchRequestQueue:
+    return DynamodbMatchRequestQueue(*draw(_dynamodb_tables()))
 
 
 @composite

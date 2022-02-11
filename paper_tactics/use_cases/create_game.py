@@ -1,39 +1,44 @@
+from uuid import uuid4
+
 from paper_tactics.entities.game import Game
+from paper_tactics.entities.match_request import MatchRequest
 from paper_tactics.entities.player import Player
 from paper_tactics.ports.game_repository import GameRepository
 from paper_tactics.ports.logger import Logger
+from paper_tactics.ports.match_request_queue import MatchRequestQueue
 from paper_tactics.ports.player_notifier import PlayerGoneException
 from paper_tactics.ports.player_notifier import PlayerNotifier
-from paper_tactics.ports.player_queue import PlayerQueue
 
 
 def create_game(
     game_repository: GameRepository,
-    player_queue: PlayerQueue,
+    match_request_queue: MatchRequestQueue,
     player_notifier: PlayerNotifier,
     logger: Logger,
-    player_id: str,
+    request: MatchRequest,
 ) -> None:
-    queued_player_id = player_queue.pop()
+    queued_request = match_request_queue.pop()
 
-    if not queued_player_id or queued_player_id == player_id:
-        player_queue.put(player_id)
+    if not queued_request or queued_request.id == request.id:
+        match_request_queue.put(request)
         return
 
-    active_player = Player(id=queued_player_id)
-    passive_player = Player(id=player_id)
-    game = Game(active_player=active_player, passive_player=passive_player)
+    active_player = Player(id=queued_request.id, view_data=queued_request.view_data)
+    passive_player = Player(id=request.id, view_data=request.view_data)
+    game = Game(
+        id=uuid4().hex, active_player=active_player, passive_player=passive_player
+    )
 
     game.init_players()
 
     try:
-        player_notifier.notify(queued_player_id, game)
+        player_notifier.notify(queued_request.id, game)
     except PlayerGoneException as e:
-        player_queue.put(player_id)
+        match_request_queue.put(queued_request)
         return logger.log_exception(e)
 
     try:
-        player_notifier.notify(player_id, game)
+        player_notifier.notify(request.id, game)
     except PlayerGoneException as e:
         return logger.log_exception(e)
 

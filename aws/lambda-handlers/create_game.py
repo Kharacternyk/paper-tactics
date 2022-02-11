@@ -1,12 +1,17 @@
+import json
+
 from paper_tactics.adapters.aws_api_gateway_player_notifier import (
     AwsApiGatewayPlayerNotifier,
 )
 from paper_tactics.adapters.dynamodb_game_repository import DynamodbGameRepository
-from paper_tactics.adapters.dynamodb_player_queue import DynamodbPlayerQueue
+from paper_tactics.adapters.dynamodb_match_request_queue import (
+    DynamodbMatchRequestQueue,
+)
 from paper_tactics.adapters.stdout_logger import StdoutLogger
+from paper_tactics.entities.match_request import MatchRequest
 from paper_tactics.use_cases.create_game import create_game
 
-player_queue = DynamodbPlayerQueue(
+player_queue = DynamodbMatchRequestQueue(
     "paper-tactics-client-queue",
     "connection-id",
     "expiration-time",
@@ -30,11 +35,14 @@ def handler(event, context):
     )
 
     try:
-        player_id = event["requestContext"]["connectionId"]
+        request = MatchRequest(
+            event["requestContext"]["connectionId"],
+            json.loads(event["body"]).get("viewData", {}),
+        )
     except KeyError as e:
         logger.log_exception(e)
         return {"statusCode": 400}
 
-    create_game(game_repository, player_queue, player_notifier, logger, player_id)
+    create_game(game_repository, player_queue, player_notifier, logger, request)
 
     return {"statusCode": 200}

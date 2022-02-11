@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from dataclasses import field
 from typing import Iterable
-from uuid import uuid4
 
 from paper_tactics.entities.cell import Cell
 from paper_tactics.entities.player import Player
@@ -9,7 +8,7 @@ from paper_tactics.entities.player import Player
 
 @dataclass
 class Game:
-    id: str = field(default_factory=lambda: uuid4().hex)
+    id: str = ""
     size: int = 10
     turns_left: int = 3
     active_player: Player = field(default_factory=Player)

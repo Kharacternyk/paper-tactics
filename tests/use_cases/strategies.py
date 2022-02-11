@@ -1,14 +1,14 @@
 from hypothesis.strategies import booleans
 from hypothesis.strategies import composite
-from hypothesis.strategies import text
 
+from tests.entities.strategies import match_requests
+from tests.use_cases.mocked_ports import MockedMatchRequestQueue
 from tests.use_cases.mocked_ports import MockedPlayerNotifier
-from tests.use_cases.mocked_ports import MockedPlayerQueue
 
 
 @composite
-def player_queues(draw) -> MockedPlayerQueue:
-    return MockedPlayerQueue(draw(text()) if draw(booleans()) else None)
+def match_request_queues(draw) -> MockedMatchRequestQueue:
+    return MockedMatchRequestQueue(draw(match_requests()))
 
 
 @composite

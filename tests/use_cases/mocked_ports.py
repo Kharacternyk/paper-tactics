@@ -2,25 +2,26 @@ from dataclasses import replace
 from typing import Optional
 
 from paper_tactics.entities.game import Game
+from paper_tactics.entities.match_request import MatchRequest
 from paper_tactics.ports.game_repository import GameRepository
 from paper_tactics.ports.game_repository import NoSuchGameException
 from paper_tactics.ports.logger import Logger
+from paper_tactics.ports.match_request_queue import MatchRequestQueue
 from paper_tactics.ports.player_notifier import PlayerGoneException
 from paper_tactics.ports.player_notifier import PlayerNotifier
-from paper_tactics.ports.player_queue import PlayerQueue
 
 
-class MockedPlayerQueue(PlayerQueue):
-    def __init__(self, player_id: Optional[str]):
-        self.player_id = player_id
+class MockedMatchRequestQueue(MatchRequestQueue):
+    def __init__(self, request=Optional[MatchRequest]):
+        self.request = request
 
-    def put(self, player_id: str) -> None:
-        assert self.player_id is None
-        self.player_id = player_id
+    def put(self, request=Optional[MatchRequest]) -> None:
+        assert self.request is None
+        self.request = request
 
-    def pop(self) -> Optional[str]:
-        result = self.player_id
-        self.player_id = None
+    def pop(self) -> Optional[MatchRequest]:
+        result = self.request
+        self.request = None
         return result
 
 
