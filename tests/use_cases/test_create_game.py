@@ -12,6 +12,19 @@ from tests.use_cases.strategies import player_notifiers
 
 
 @given(match_request_queues(), player_notifiers(), match_requests())
+def test_queued_request_is_replaced_if_player_is_gone(
+    match_request_queue: MockedMatchRequestQueue,
+    player_notifier: MockedPlayerNotifier,
+    request: MatchRequest,
+):
+    game_repository = MockedGameRepository()
+    logger = MockedLogger()
+    create_game(game_repository, match_request_queue, player_notifier, logger, request)
+
+    assert not match_request_queue.request or match_request_queue.request == request
+
+
+@given(match_request_queues(), player_notifiers(), match_requests())
 def test_game_is_stored_if_and_only_if_no_players_are_gone(
     match_request_queue: MockedMatchRequestQueue,
     player_notifier: MockedPlayerNotifier,

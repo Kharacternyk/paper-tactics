@@ -34,7 +34,7 @@ def create_game(
     try:
         player_notifier.notify(queued_request.id, game)
     except PlayerGoneException as e:
-        match_request_queue.put(queued_request)
+        match_request_queue.put(request)
         return logger.log_exception(e)
 
     try:
