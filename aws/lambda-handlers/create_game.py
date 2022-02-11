@@ -26,6 +26,10 @@ game_repository = DynamodbGameRepository(
 logger = StdoutLogger()
 
 
+class ApiAbuseException(Exception):
+    pass
+
+
 def handler(event, context):
     player_notifier = AwsApiGatewayPlayerNotifier(
         "https://"
@@ -35,6 +39,8 @@ def handler(event, context):
     )
 
     try:
+        if len(event["body"]) > 2048:
+            raise ApiAbuseException(event["body"])
         request = MatchRequest(
             event["requestContext"]["connectionId"],
             json.loads(event["body"]).get("viewData", {}),
