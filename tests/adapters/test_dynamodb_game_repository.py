@@ -11,7 +11,7 @@ from tests.entities.strategies import games
 
 @mock_dynamodb2
 @given(dynamodb_game_repositories(), games())
-@settings(max_examples=10)
+@settings(max_examples=5)
 def test_game_is_not_changed_if_written_and_read_back(game_repository, game):
     game_repository.store(game)
 
