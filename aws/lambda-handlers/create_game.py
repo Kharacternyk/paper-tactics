@@ -45,7 +45,7 @@ def handler(event, context):
             event["requestContext"]["connectionId"],
             json.loads(event["body"]).get("viewData", {}),
         )
-    except KeyError as e:
+    except (KeyError, ApiAbuseException) as e:
         logger.log_exception(e)
         return {"statusCode": 400}
 
