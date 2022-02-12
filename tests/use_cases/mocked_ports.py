@@ -32,6 +32,7 @@ class MockedPlayerNotifier(PlayerNotifier):
         self.notified_player_ids = []
 
     def notify(self, player_id: str, game: Game) -> None:
+        self.notified_player_ids.append(player_id)
         if (
             self.active_player_is_gone
             and game.active_player.id == player_id
@@ -39,7 +40,6 @@ class MockedPlayerNotifier(PlayerNotifier):
             and game.passive_player.id == player_id
         ):
             raise PlayerGoneException(player_id)
-        self.notified_player_ids.append(player_id)
 
 
 class MockedGameRepository(GameRepository):

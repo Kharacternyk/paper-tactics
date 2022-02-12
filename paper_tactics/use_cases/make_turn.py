@@ -28,7 +28,7 @@ def make_turn(
     try:
         player_notifier.notify(game.active_player.id, game)
     except PlayerGoneException as e:
-        game.active_player.reachable = set()
+        game.active_player.has_lost = True
         game_repository.store(game)
         try:
             player_notifier.notify(game.passive_player.id, game)
@@ -39,7 +39,7 @@ def make_turn(
     try:
         player_notifier.notify(game.passive_player.id, game)
     except PlayerGoneException as e:
-        game.passive_player.reachable = set()
+        game.passive_player.has_lost = True
         game_repository.store(game)
         try:
             player_notifier.notify(game.active_player.id, game)

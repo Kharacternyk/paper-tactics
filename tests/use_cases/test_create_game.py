@@ -50,7 +50,7 @@ def test_game_is_stored_if_and_only_if_no_players_are_gone(
 
 
 @given(match_request_queues(), player_notifiers(), match_requests())
-def test_both_players_are_notified_if_and_only_if_a_game_has_been_stored(
+def test_a_game_is_stored_if_and_only_if_players_are_not_gone(
     match_request_queue: MockedMatchRequestQueue,
     player_notifier: MockedPlayerNotifier,
     request: MatchRequest,
@@ -65,7 +65,10 @@ def test_both_players_are_notified_if_and_only_if_a_game_has_been_stored(
             request.id in player_notifier.notified_player_ids
             and queued_request
             and queued_request.id in player_notifier.notified_player_ids
-            and len(player_notifier.notified_player_ids) == 2
         )
     else:
-        assert len(player_notifier.notified_player_ids) < 2
+        assert (
+            player_notifier.passive_player_is_gone
+            or player_notifier.active_player_is_gone
+            or (queued_request and queued_request.id == request.id)
+        )
