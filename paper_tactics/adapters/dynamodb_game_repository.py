@@ -49,7 +49,7 @@ class DynamodbGameRepository(GameRepository):
             "units": list(player.units),
             "walls": list(player.walls),
             "reachable": list(player.reachable),
-            "has_lost": player.has_lost,
+            "is_gone": player.is_gone,
             "view_data": player.view_data,
         }
 
@@ -59,7 +59,7 @@ class DynamodbGameRepository(GameRepository):
             units=set((int(x), int(y)) for x, y in source["units"]),
             walls=set((int(x), int(y)) for x, y in source["walls"]),
             reachable=set((int(x), int(y)) for x, y in source["reachable"]),
-            has_lost=source["has_lost"],
+            is_gone=source["is_gone"],
             view_data=source["view_data"],
         )
 

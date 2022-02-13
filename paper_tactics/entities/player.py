@@ -10,5 +10,9 @@ class Player:
     units: set[Cell] = field(default_factory=set)
     walls: set[Cell] = field(default_factory=set)
     reachable: set[Cell] = field(default_factory=set)
-    has_lost: bool = False
     view_data: dict[str, str] = field(default_factory=dict)
+    is_gone: bool = False
+
+    @property
+    def is_defeated(self) -> bool:
+        return not self.reachable

@@ -19,7 +19,7 @@ def concede(
 
     for player in game.active_player, game.passive_player:
         if player.id == player_id:
-            player.has_lost = True
+            player.is_gone = True
 
     for player in game.active_player, game.passive_player:
         try:
