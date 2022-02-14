@@ -5,8 +5,7 @@ import boto3
 
 from paper_tactics.entities.game import Game
 from paper_tactics.entities.player import Player
-from paper_tactics.ports.player_notifier import PlayerGoneException
-from paper_tactics.ports.player_notifier import PlayerNotifier
+from paper_tactics.ports.player_notifier import PlayerGoneException, PlayerNotifier
 
 
 class AwsApiGatewayPlayerNotifier(PlayerNotifier):

@@ -3,12 +3,13 @@ from hypothesis import given
 from paper_tactics.entities.match_request import MatchRequest
 from paper_tactics.use_cases.create_game import create_game
 from tests.entities.strategies import match_requests
-from tests.use_cases.mocked_ports import MockedGameRepository
-from tests.use_cases.mocked_ports import MockedLogger
-from tests.use_cases.mocked_ports import MockedMatchRequestQueue
-from tests.use_cases.mocked_ports import MockedPlayerNotifier
-from tests.use_cases.strategies import match_request_queues
-from tests.use_cases.strategies import player_notifiers
+from tests.use_cases.mocked_ports import (
+    MockedGameRepository,
+    MockedLogger,
+    MockedMatchRequestQueue,
+    MockedPlayerNotifier,
+)
+from tests.use_cases.strategies import match_request_queues, player_notifiers
 
 
 @given(match_request_queues(), player_notifiers(), match_requests())

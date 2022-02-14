@@ -11,7 +11,6 @@ python = "~3.9"
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
 hypothesis = "^6.34.1"
-reorder-python-imports = "^2.6.0"
 black = "^21.12b0"
 flake8 = "^4.0.1"
 pre-commit = "^2.16.0"
@@ -20,6 +19,10 @@ moto = {extras = ["dynamodb"], version = "^2.3.1"}
 pytest-cov = "^3.0.0"
 mypy = "^0.931"
 boto3-stubs = {extras = ["dynamodb", "apigateway"], version = "^1.20.54"}
+isort = "^5.10.1"
+
+[tool.isort]
+profile = "black"
 
 [tool.pytest.ini_options]
 addopts = "--import-mode importlib"

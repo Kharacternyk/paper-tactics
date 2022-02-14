@@ -4,9 +4,11 @@ from hypothesis.strategies import booleans
 from paper_tactics.entities.game import Game
 from paper_tactics.use_cases.concede import concede
 from tests.entities.strategies import games
-from tests.use_cases.mocked_ports import MockedGameRepository
-from tests.use_cases.mocked_ports import MockedLogger
-from tests.use_cases.mocked_ports import MockedPlayerNotifier
+from tests.use_cases.mocked_ports import (
+    MockedGameRepository,
+    MockedLogger,
+    MockedPlayerNotifier,
+)
 from tests.use_cases.strategies import player_notifiers
 
 

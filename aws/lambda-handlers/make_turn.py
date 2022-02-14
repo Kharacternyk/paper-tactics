@@ -1,6 +1,5 @@
 import json
-from typing import Any
-from typing import cast
+from typing import Any, cast
 
 from paper_tactics.adapters.aws_api_gateway_player_notifier import (
     AwsApiGatewayPlayerNotifier,

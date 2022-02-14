@@ -1,5 +1,4 @@
-from hypothesis import given
-from hypothesis import settings
+from hypothesis import given, settings
 from hypothesis.strategies import text
 from moto import mock_dynamodb2
 from pytest import raises

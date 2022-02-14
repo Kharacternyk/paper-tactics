@@ -6,8 +6,7 @@ from paper_tactics.entities.player import Player
 from paper_tactics.ports.game_repository import GameRepository
 from paper_tactics.ports.logger import Logger
 from paper_tactics.ports.match_request_queue import MatchRequestQueue
-from paper_tactics.ports.player_notifier import PlayerGoneException
-from paper_tactics.ports.player_notifier import PlayerNotifier
+from paper_tactics.ports.player_notifier import PlayerGoneException, PlayerNotifier
 
 
 def create_game(

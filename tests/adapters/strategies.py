@@ -2,9 +2,7 @@ import os
 
 import boto3
 from hypothesis import assume
-from hypothesis.strategies import composite
-from hypothesis.strategies import integers
-from hypothesis.strategies import text
+from hypothesis.strategies import composite, integers, text
 
 from paper_tactics.adapters.dynamodb_game_repository import DynamodbGameRepository
 from paper_tactics.adapters.dynamodb_match_request_queue import (

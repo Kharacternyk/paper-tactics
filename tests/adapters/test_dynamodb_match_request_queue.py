@@ -1,5 +1,4 @@
-from hypothesis import given
-from hypothesis import settings
+from hypothesis import given, settings
 from moto import mock_dynamodb2
 
 from tests.adapters.strategies import dynamodb_match_request_queues

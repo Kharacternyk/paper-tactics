@@ -1,10 +1,8 @@
 from paper_tactics.entities.cell import Cell
 from paper_tactics.entities.game import IllegalTurnException
-from paper_tactics.ports.game_repository import GameRepository
-from paper_tactics.ports.game_repository import NoSuchGameException
+from paper_tactics.ports.game_repository import GameRepository, NoSuchGameException
 from paper_tactics.ports.logger import Logger
-from paper_tactics.ports.player_notifier import PlayerGoneException
-from paper_tactics.ports.player_notifier import PlayerNotifier
+from paper_tactics.ports.player_notifier import PlayerGoneException, PlayerNotifier
 
 
 def make_turn(

@@ -1,7 +1,4 @@
-from hypothesis.strategies import composite
-from hypothesis.strategies import dictionaries
-from hypothesis.strategies import integers
-from hypothesis.strategies import text
+from hypothesis.strategies import composite, dictionaries, integers, text
 
 from paper_tactics.entities.game import Game
 from paper_tactics.entities.match_request import MatchRequest

@@ -5,8 +5,7 @@ import boto3
 
 from paper_tactics.entities.game import Game
 from paper_tactics.entities.player import Player
-from paper_tactics.ports.game_repository import GameRepository
-from paper_tactics.ports.game_repository import NoSuchGameException
+from paper_tactics.ports.game_repository import GameRepository, NoSuchGameException
 
 
 class DynamodbGameRepository(GameRepository):
