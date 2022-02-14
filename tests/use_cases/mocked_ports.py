@@ -29,7 +29,7 @@ class MockedPlayerNotifier(PlayerNotifier):
     def __init__(self, active_player_is_gone: bool, passive_player_is_gone: bool):
         self.active_player_is_gone = active_player_is_gone
         self.passive_player_is_gone = passive_player_is_gone
-        self.notified_player_ids = []
+        self.notified_player_ids: list[str] = []
 
     def notify(self, player_id: str, game: Game) -> None:
         self.notified_player_ids.append(player_id)
