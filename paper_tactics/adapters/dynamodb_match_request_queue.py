@@ -34,7 +34,7 @@ class DynamodbMatchRequestQueue(MatchRequestQueue):
 
         return MatchRequest(item[self._key], item["view_data"])  # type: ignore
 
-    def _get_expiration_time(self):
+    def _get_expiration_time(self) -> int:
         now = int(time())
 
         return now + self._ttl_in_seconds

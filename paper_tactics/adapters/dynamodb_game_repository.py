@@ -17,7 +17,7 @@ class DynamodbGameRepository(GameRepository):
         self._table = boto3.resource("dynamodb").Table(table_name)
 
     def store(self, game: Game) -> None:
-        serialized_game = {
+        serialized_game: dict[str, Any] = {
             self._key: game.id,
             "size": game.size,
             "turns-left": game.turns_left,
@@ -44,7 +44,7 @@ class DynamodbGameRepository(GameRepository):
             passive_player=self._deserialize_player(serialized_game["passive-player"]),
         )
 
-    def _serialize_player(self, player: Player) -> dict:
+    def _serialize_player(self, player: Player) -> dict[str, Any]:
         return {
             "id": player.id,
             "units": list(player.units),
@@ -54,7 +54,7 @@ class DynamodbGameRepository(GameRepository):
             "view_data": player.view_data,
         }
 
-    def _deserialize_player(self, source: dict) -> Player:
+    def _deserialize_player(self, source: dict[str, Any]) -> Player:
         return Player(
             id=source["id"],
             units=set((int(x), int(y)) for x, y in source["units"]),
@@ -64,7 +64,7 @@ class DynamodbGameRepository(GameRepository):
             view_data=source["view_data"],
         )
 
-    def _get_expiration_time(self):
+    def _get_expiration_time(self) -> int:
         now = int(time())
 
         return now + self._ttl_in_seconds

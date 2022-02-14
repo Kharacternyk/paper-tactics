@@ -1,10 +1,13 @@
 import json
+from typing import Any
+from typing import cast
 
 from paper_tactics.adapters.aws_api_gateway_player_notifier import (
     AwsApiGatewayPlayerNotifier,
 )
 from paper_tactics.adapters.dynamodb_game_repository import DynamodbGameRepository
 from paper_tactics.adapters.stdout_logger import StdoutLogger
+from paper_tactics.entities.cell import Cell
 from paper_tactics.use_cases.make_turn import make_turn
 
 game_repository = DynamodbGameRepository(
@@ -16,7 +19,7 @@ game_repository = DynamodbGameRepository(
 logger = StdoutLogger()
 
 
-def handler(event, context):
+def handler(event: dict[str, Any], context: Any) -> dict[str, int]:
     player_notifier = AwsApiGatewayPlayerNotifier(
         "https://"
         + event["requestContext"]["domainName"]
@@ -28,7 +31,7 @@ def handler(event, context):
         player_id = event["requestContext"]["connectionId"]
         body = json.loads(event["body"])
         game_id = body["gameId"]
-        cell = tuple(body["cell"])
+        cell = cast(Cell, tuple(body["cell"]))
         assert len(cell) == 2
     except Exception as e:
         logger.log_exception(e)

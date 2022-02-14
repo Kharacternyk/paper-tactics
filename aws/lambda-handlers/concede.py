@@ -1,4 +1,5 @@
 import json
+from typing import Any
 
 from paper_tactics.adapters.aws_api_gateway_player_notifier import (
     AwsApiGatewayPlayerNotifier,
@@ -16,7 +17,7 @@ game_repository = DynamodbGameRepository(
 logger = StdoutLogger()
 
 
-def handler(event, context):
+def handler(event: dict[str, Any], context: Any) -> dict[str, int]:
     player_notifier = AwsApiGatewayPlayerNotifier(
         "https://"
         + event["requestContext"]["domainName"]

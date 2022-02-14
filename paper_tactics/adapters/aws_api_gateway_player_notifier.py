@@ -1,4 +1,5 @@
 import json
+from typing import Any
 
 import boto3
 
@@ -25,7 +26,7 @@ class AwsApiGatewayPlayerNotifier(PlayerNotifier):
         except self._client.exceptions.GoneException:
             raise PlayerGoneException(player_id)
 
-    def _create_game_view(self, player_id: str, game: Game) -> dict:
+    def _create_game_view(self, player_id: str, game: Game) -> dict[str, Any]:
         if player_id == game.active_player.id:
             return self._create_game_view_for_active_player(game)
         elif player_id == game.passive_player.id:
@@ -33,7 +34,7 @@ class AwsApiGatewayPlayerNotifier(PlayerNotifier):
 
         raise ValueError("No such player")
 
-    def _create_game_view_for_active_player(self, game: Game) -> dict:
+    def _create_game_view_for_active_player(self, game: Game) -> dict[str, Any]:
         return {
             "id": game.id,
             "size": game.size,
@@ -43,7 +44,7 @@ class AwsApiGatewayPlayerNotifier(PlayerNotifier):
             "opponent": self._create_player_view(game.passive_player),
         }
 
-    def _create_game_view_for_passive_player(self, game: Game) -> dict:
+    def _create_game_view_for_passive_player(self, game: Game) -> dict[str, Any]:
         return {
             "id": game.id,
             "size": game.size,
@@ -53,7 +54,7 @@ class AwsApiGatewayPlayerNotifier(PlayerNotifier):
             "opponent": self._create_player_view(game.active_player),
         }
 
-    def _create_player_view(self, player: Player) -> dict:
+    def _create_player_view(self, player: Player) -> dict[str, Any]:
         return {
             "units": list(player.units),
             "walls": list(player.walls),
