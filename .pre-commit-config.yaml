@@ -21,6 +21,12 @@ repos:
         entry: flake8
         types: [python]
 
+      - id: mypy
+        name: mypy
+        language: system
+        entry: mypy
+        types: [python]
+
       - id: pytest
         name: pytest
         language: system

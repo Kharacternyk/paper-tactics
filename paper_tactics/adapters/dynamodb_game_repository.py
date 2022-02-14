@@ -1,4 +1,5 @@
 from time import time
+from typing import Any
 
 import boto3
 
@@ -29,7 +30,7 @@ class DynamodbGameRepository(GameRepository):
 
     def fetch(self, game_id: str) -> Game:
         try:
-            serialized_game = self._table.get_item(
+            serialized_game: dict[str, Any] = self._table.get_item(
                 Key={self._key: game_id}, ConsistentRead=True
             )["Item"]
         except KeyError:

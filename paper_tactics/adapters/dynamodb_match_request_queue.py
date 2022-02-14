@@ -32,7 +32,7 @@ class DynamodbMatchRequestQueue(MatchRequestQueue):
         item = queue["Items"][0]
         self._table.delete_item(Key={self._key: item[self._key]})
 
-        return MatchRequest(item[self._key], item["view_data"])
+        return MatchRequest(item[self._key], item["view_data"])  # type: ignore
 
     def _get_expiration_time(self):
         now = int(time())
