@@ -25,6 +25,14 @@ repos:
         name: mypy
         language: system
         entry: mypy --strict
+        files: ^(paper_tactics|aws/lambda-handlers)/
+        types: [python]
+
+      - id: mypy-tests
+        name: mypy-tests
+        language: system
+        entry: mypy
+        files: ^tests/
         types: [python]
 
       - id: pytest
