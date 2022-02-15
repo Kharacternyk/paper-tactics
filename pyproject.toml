@@ -16,7 +16,7 @@ flake8 = "^4.0.1"
 pre-commit = "^2.16.0"
 boto3 = "^1.20.31"
 moto = {extras = ["dynamodb"], version = "^2.3.1"}
-pytest-cov = "^3.0.0"
+pytest-cov = {extras = ["toml"], version = "^3.0.0"}
 mypy = "^0.931"
 boto3-stubs = {extras = ["dynamodb", "apigateway"], version = "^1.20.54"}
 isort = "^5.10.1"
@@ -26,6 +26,16 @@ profile = "black"
 
 [tool.pytest.ini_options]
 addopts = "--import-mode importlib"
+
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = [
+    'def __repr__',
+    '\s\.\.\.$'
+]
 
 [[tool.mypy.overrides]]
 module = "moto"

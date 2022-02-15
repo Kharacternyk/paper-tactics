@@ -74,8 +74,10 @@ class Game:
                 self.active_player,
             )
             self.turns_left = 3
+        if not self.active_player.reachable:
+            self.active_player.is_defeated = True
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         board = [[" " for j in range(self.size)] for i in range(self.size)]
         for x, y in self.active_player.units:
             board[x - 1][y - 1] = "o"
@@ -85,7 +87,7 @@ class Game:
             board[x - 1][y - 1] = "x"
         for x, y in self.passive_player.walls:
             board[x - 1][y - 1] = "X"
-        return "\n".join("".join(row) for row in board)
+        return "\n" + "\n".join("".join(row) for row in board)
 
 
 class IllegalTurnException(Exception):

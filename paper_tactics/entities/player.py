@@ -11,7 +11,4 @@ class Player:
     reachable: set[Cell] = field(default_factory=set)
     view_data: dict[str, str] = field(default_factory=dict)
     is_gone: bool = False
-
-    @property
-    def is_defeated(self) -> bool:
-        return not self.reachable
+    is_defeated: bool = False
