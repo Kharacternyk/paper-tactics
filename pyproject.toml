@@ -23,12 +23,13 @@ boto3-stubs = {extras = ["dynamodb", "apigateway"], version = "^1.20.54"}
 isort = "^5.10.1"
 fakeredis = "^1.7.1"
 types-redis = "^4.1.16"
+pytest-testmon = "^1.2.3"
 
 [tool.isort]
 profile = "black"
 
 [tool.pytest.ini_options]
-addopts = "--import-mode importlib"
+addopts = "--testmon --import-mode importlib"
 
 [tool.coverage.run]
 branch = true
