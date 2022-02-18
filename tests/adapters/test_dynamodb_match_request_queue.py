@@ -15,7 +15,7 @@ def test_pop_on_empty_queue_returns_none(queue):
 @mock_dynamodb2
 @given(dynamodb_match_request_queues(), match_requests())
 @settings(max_examples=10)
-def test_player_id_is_popped_after_stored_and_read_back(queue, request):
+def test_request_is_popped_after_stored_and_read_back(queue, request):
     queue.put(request)
 
     assert queue.pop() == request
