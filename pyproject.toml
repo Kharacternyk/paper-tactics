@@ -8,6 +8,7 @@ license = "AGPL-3.0-or-later"
 [tool.poetry.dependencies]
 python = "~3.9"
 redis = "^4.1.4"
+websockets = "^10.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
