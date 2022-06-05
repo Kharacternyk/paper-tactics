@@ -9,6 +9,8 @@ license = "AGPL-3.0-or-later"
 python = "~3.9"
 redis = "^4.1.4"
 websockets = "^10.3"
+bidict = "^0.22.0"
+nest-asyncio = "^1.5.5"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
@@ -48,6 +50,10 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = "fakeredis"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "nest_asyncio"
 ignore_missing_imports = true
 
 [build-system]

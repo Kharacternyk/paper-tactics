@@ -29,6 +29,14 @@ tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)"
 tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "mypy", "pytest-mypy-plugins", "cloudpickle"]
 
 [[package]]
+name = "bidict"
+version = "0.22.0"
+description = "The bidirectional mapping library for Python."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[[package]]
 name = "black"
 version = "22.3.0"
 description = "The uncompromising code formatter."
@@ -68,8 +76,8 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "boto3-stubs"
-version = "1.24.1"
-description = "Type annotations for boto3 1.24.1 generated with mypy-boto3-builder 7.6.1"
+version = "1.24.2"
+description = "Type annotations for boto3 1.24.2 generated with mypy-boto3-builder 7.6.1"
 category = "dev"
 optional = false
 python-versions = ">=3.6"
@@ -768,6 +776,14 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "nest-asyncio"
+version = "1.5.5"
+description = "Patch asyncio to allow nested event loops"
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[[package]]
 name = "nodeenv"
 version = "1.6.0"
 description = "Node.js virtual environment builder"
@@ -1133,7 +1149,7 @@ python-versions = ">=3.4"
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.9"
-content-hash = "02a0f21383708cce0bf9a030664d90489072a3f39de0d8d0ae68115f741928a3"
+content-hash = "dc70cb05e173ce34a1eef7fea90e22e1058ef2cf83c034f895b077c8a62a1671"
 
 [metadata.files]
 async-timeout = [
@@ -1147,6 +1163,10 @@ atomicwrites = [
 attrs = [
     {file = "attrs-21.4.0-py2.py3-none-any.whl", hash = "sha256:2d27e3784d7a565d36ab851fe94887c5eccd6a463168875832a1be79c82828b4"},
     {file = "attrs-21.4.0.tar.gz", hash = "sha256:626ba8234211db98e869df76230a137c4c40a12d72445c45d5f5b716f076e2fd"},
+]
+bidict = [
+    {file = "bidict-0.22.0-py3-none-any.whl", hash = "sha256:415126d23a0c81e1a8c584a8fb1f6905ea090c772571803aeee0a2242e8e7ba0"},
+    {file = "bidict-0.22.0.tar.gz", hash = "sha256:5c826b3e15e97cc6e615de295756847c282a79b79c5430d3bfc909b1ac9f5bd8"},
 ]
 black = [
     {file = "black-22.3.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:2497f9c2386572e28921fa8bec7be3e51de6801f7459dffd6e62492531c47e09"},
@@ -1178,8 +1198,8 @@ boto3 = [
     {file = "boto3-1.24.0.tar.gz", hash = "sha256:8df0215521969e229a6a004eedc6a484a3656611ddee698419d3658ae9c53c50"},
 ]
 boto3-stubs = [
-    {file = "boto3-stubs-1.24.1.tar.gz", hash = "sha256:efc8f0064c2a99a8b7049a10ab5cb6db06e4e0ba6c05d78bef58f80b084295c2"},
-    {file = "boto3_stubs-1.24.1-py3-none-any.whl", hash = "sha256:e4a808076d50bbd681a8b4c9c42b9aa4da30fdd0640fc0968f8882b6c24de04c"},
+    {file = "boto3-stubs-1.24.2.tar.gz", hash = "sha256:c45fce34cf80106931d8dd5eb6ad556f0643fbe2742344cb8f57941a94ba07ed"},
+    {file = "boto3_stubs-1.24.2-py3-none-any.whl", hash = "sha256:17652cafca1334b9719c1c42a74c7056b7deb95f8289482cf20ef73b534673c7"},
 ]
 botocore = [
     {file = "botocore-1.27.0-py3-none-any.whl", hash = "sha256:40823d9c3e2e707e74112aa0b1073e9eeb6c7f6a7d123518b5f768fc11b250f7"},
@@ -1462,6 +1482,10 @@ mypy-boto3-dynamodb = [
 mypy-extensions = [
     {file = "mypy_extensions-0.4.3-py2.py3-none-any.whl", hash = "sha256:090fedd75945a69ae91ce1303b5824f428daf5a028d2f6ab8a299250a846f15d"},
     {file = "mypy_extensions-0.4.3.tar.gz", hash = "sha256:2d82818f5bb3e369420cb3c4060a7970edba416647068eb4c5343488a6c604a8"},
+]
+nest-asyncio = [
+    {file = "nest_asyncio-1.5.5-py3-none-any.whl", hash = "sha256:b98e3ec1b246135e4642eceffa5a6c23a3ab12c82ff816a92c612d68205813b2"},
+    {file = "nest_asyncio-1.5.5.tar.gz", hash = "sha256:e442291cd942698be619823a17a86a5759eabe1f8613084790de189fe9e16d65"},
 ]
 nodeenv = [
     {file = "nodeenv-1.6.0-py2.py3-none-any.whl", hash = "sha256:621e6b7076565ddcacd2db0294c0381e01fd28945ab36bcf00f41c5daf63bef7"},
