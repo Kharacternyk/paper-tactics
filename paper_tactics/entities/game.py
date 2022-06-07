@@ -49,11 +49,17 @@ class Game:
 
     def _rebuild_reachable_set(self, player: Player, opponent: Player) -> None:
         player.reachable.clear()
+        player.visible = {
+            cell
+            for cell in player.visible
+            if cell in opponent.units or cell in opponent.walls
+        }
         sources = player.units.copy()
         while True:
             new_sources = set()
             for source in sources:
                 for cell in self.get_adjacent_cells(source):
+                    player.visible.add(cell)
                     if cell in sources:
                         continue
                     if cell in player.walls:
