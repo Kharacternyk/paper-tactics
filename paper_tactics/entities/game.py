@@ -78,6 +78,9 @@ class Game:
             self.active_player.is_defeated = True
 
     def __repr__(self) -> str:
+        if self.id:
+            return NotImplemented
+
         board = [[" " for j in range(self.size)] for i in range(self.size)]
         for x, y in self.active_player.units:
             board[x - 1][y - 1] = "o"
