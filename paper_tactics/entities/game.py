@@ -15,11 +15,9 @@ class Game:
 
     def init_players(self) -> None:
         self.active_player.units.add((1, 1))
-        self.active_player.reachable.update(self.get_adjacent_cells((1, 1)))
         self.passive_player.units.add((self.size, self.size))
-        self.passive_player.reachable.update(
-            self.get_adjacent_cells((self.size, self.size))
-        )
+        self._rebuild_reachable_set(self.active_player, self.passive_player)
+        self._rebuild_reachable_set(self.passive_player, self.active_player)
 
     def make_turn(self, player_id: str, cell: Cell) -> None:
         if (
