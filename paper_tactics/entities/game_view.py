@@ -16,12 +16,12 @@ class PlayerView:
     is_defeated: bool
 
     def __init__(self, player: Player):
-        self.units = player.units
-        self.walls = player.walls
-        self.reachable = player.reachable
+        self.units = player.units.copy()
+        self.walls = player.walls.copy()
+        self.reachable = player.reachable.copy()
         self.is_gone = player.is_gone
         self.is_defeated = player.is_defeated
-        self.view_data = player.view_data
+        self.view_data = player.view_data.copy()
 
 
 @dataclass
