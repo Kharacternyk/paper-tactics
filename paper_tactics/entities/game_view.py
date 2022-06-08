@@ -11,7 +11,6 @@ class PlayerView:
     units: set[Cell]
     walls: set[Cell]
     reachable: set[Cell]
-    visible: set[Cell]
     view_data: dict[str, str]
     is_gone: bool
     is_defeated: bool
@@ -20,7 +19,6 @@ class PlayerView:
         self.units = player.units.copy()
         self.walls = player.walls.copy()
         self.reachable = player.reachable.copy()
-        self.visible = player.visible.copy()
         self.is_gone = player.is_gone
         self.is_defeated = player.is_defeated
         self.view_data = player.view_data.copy()
@@ -54,8 +52,6 @@ class GameView:
             self.opponent.walls.intersection_update(game.passive_player.visible)
         else:
             raise ValueError("No such player")
-
-        self.opponent.visible.clear()
 
     def to_json(self) -> str:
         game_dict = asdict(self)
