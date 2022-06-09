@@ -40,19 +40,19 @@ class GameView:
 
         if player_id == game.active_player.id:
             self.my_turn = True
-            self.me = PlayerView(game.active_player)
-            self.opponent = PlayerView(game.passive_player)
-            self.opponent.units.intersection_update(game.active_player.visible)
-            self.opponent.walls.intersection_update(game.active_player.visible)
+            me = game.active_player
+            opponent = game.passive_player
         elif player_id == game.passive_player.id:
             self.my_turn = False
-            self.me = PlayerView(game.passive_player)
-            self.opponent = PlayerView(game.active_player)
-            self.opponent.units.intersection_update(game.passive_player.visible)
-            self.opponent.walls.intersection_update(game.passive_player.visible)
+            me = game.passive_player
+            opponent = game.active_player
         else:
             raise ValueError("No such player")
 
+        self.me = PlayerView(me)
+        self.opponent = PlayerView(opponent)
+        self.opponent.units.intersection_update(me.visible)
+        self.opponent.walls.intersection_update(me.visible)
         self.opponent.reachable.clear()
 
     def to_json(self) -> str:
