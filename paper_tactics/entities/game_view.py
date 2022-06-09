@@ -52,7 +52,6 @@ class GameView:
         self.me = PlayerView(me)
         self.opponent = PlayerView(opponent)
         self.opponent.units.intersection_update(me.visible)
-        self.opponent.walls.intersection_update(me.visible)
         self.opponent.reachable.clear()
 
     def to_json(self) -> str:
