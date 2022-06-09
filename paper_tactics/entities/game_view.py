@@ -53,6 +53,8 @@ class GameView:
         else:
             raise ValueError("No such player")
 
+        self.opponent.reachable.clear()
+
     def to_json(self) -> str:
         game_dict = asdict(self)
         for player_view in game_dict["me"], game_dict["opponent"]:
