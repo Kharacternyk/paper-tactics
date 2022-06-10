@@ -13,3 +13,7 @@ class Player:
     view_data: dict[str, str] = field(default_factory=dict)
     is_gone: bool = False
     is_defeated: bool = False
+
+    @property
+    def can_win(self) -> bool:
+        return not self.is_defeated and not self.is_gone
