@@ -14,13 +14,8 @@ class MockedMatchRequestQueue(MatchRequestQueue):
     def __init__(self, requests: Optional[Iterable[MatchRequest]]):
         self.requests: list = list(requests) if requests is not None else []
 
-    def put(self, request=Optional[MatchRequest]) -> None:
-        assert not [
-            queued_request
-            for queued_request in self.requests
-            if queued_request.game_preferences == request.game_preferences
-        ]
-        self.request = request
+    def put(self, request: MatchRequest) -> None:
+        self.requests.append(request)
 
     def pop(self, preferences: GamePreferences) -> Optional[MatchRequest]:
         queued_request = next(
