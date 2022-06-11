@@ -2,7 +2,9 @@ from dataclasses import dataclass, field
 from typing import Iterable
 
 from paper_tactics.entities.cell import Cell
+from paper_tactics.entities.game_view import GameView
 from paper_tactics.entities.player import Player
+from paper_tactics.entities.player_view import PlayerView
 
 
 @dataclass
@@ -18,6 +20,44 @@ class Game:
         self.passive_player.units.add((self.size, self.size))
         self._rebuild_reachable_set(self.active_player, self.passive_player)
         self._rebuild_reachable_set(self.passive_player, self.active_player)
+
+    def get_view(self, player_id: str) -> GameView:
+        if player_id == self.active_player.id:
+            me = self.active_player
+            opponent = self.passive_player
+        elif player_id == self.passive_player.id:
+            me = self.passive_player
+            opponent = self.active_player
+        else:
+            raise ValueError("No such player")
+
+        if me.can_win and opponent.can_win:
+            opponent_units = opponent.units.intersection(me.visible)
+        else:
+            opponent_units = opponent.units.copy()
+
+        return GameView(
+            id=self.id,
+            size=self.size,
+            turns_left=self.turns_left,
+            my_turn=(me == self.active_player),
+            me=PlayerView(
+                units=me.units.copy(),
+                walls=me.walls.copy(),
+                reachable=me.reachable.copy(),
+                view_data=me.view_data.copy(),
+                is_gone=me.is_gone,
+                is_defeated=me.is_defeated,
+            ),
+            opponent=PlayerView(
+                units=opponent_units,
+                walls=opponent.walls.copy(),
+                reachable=set(),
+                view_data=opponent.view_data.copy(),
+                is_gone=opponent.is_gone,
+                is_defeated=opponent.is_defeated,
+            ),
+        )
 
     def make_turn(self, player_id: str, cell: Cell) -> None:
         if (

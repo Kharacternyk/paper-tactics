@@ -5,7 +5,6 @@ from websockets.exceptions import ConnectionClosed
 from websockets.server import WebSocketServerProtocol
 
 from paper_tactics.entities.game import Game
-from paper_tactics.entities.game_view import GameView
 from paper_tactics.ports.player_notifier import PlayerGoneException, PlayerNotifier
 
 
@@ -14,7 +13,7 @@ class WebsocketsPlayerNotifier(PlayerNotifier):
         self.websockets: bidict[str, WebSocketServerProtocol] = bidict()
 
     def notify(self, player_id: str, game: Game) -> None:
-        view = GameView(game, player_id)
+        view = game.get_view(player_id)
 
         try:
             asyncio.get_event_loop().run_until_complete(
