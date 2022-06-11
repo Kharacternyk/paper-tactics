@@ -4,7 +4,7 @@ from dataclasses import asdict, dataclass
 from paper_tactics.entities.player_view import PlayerView
 
 
-@dataclass
+@dataclass(frozen=True)
 class GameView:
     id: str
     size: int
@@ -17,6 +17,6 @@ class GameView:
         game_dict = asdict(self)
         for player_view in game_dict["me"], game_dict["opponent"]:
             for key in player_view:
-                if isinstance(player_view[key], set):
+                if isinstance(player_view[key], (set, frozenset)):
                     player_view[key] = list(player_view[key])
         return json.dumps(game_dict, separators=(",", ":"))

@@ -3,11 +3,11 @@ from dataclasses import dataclass
 from paper_tactics.entities.cell import Cell
 
 
-@dataclass
+@dataclass(frozen=True)
 class PlayerView:
-    units: set[Cell]
-    walls: set[Cell]
-    reachable: set[Cell]
+    units: frozenset[Cell]
+    walls: frozenset[Cell]
+    reachable: frozenset[Cell]
     view_data: dict[str, str]
     is_gone: bool
     is_defeated: bool

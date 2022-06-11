@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Final, Iterable
+from typing import Final, Iterable, cast
 
 from paper_tactics.entities.cell import Cell
 from paper_tactics.entities.game_preferences import GamePreferences
@@ -10,7 +10,7 @@ from paper_tactics.entities.player_view import PlayerView
 
 @dataclass
 class Game:
-    id: str = ""
+    id: Final[str] = ""
     preferences: Final[GamePreferences] = field(default_factory=GamePreferences)
     turns_left: int = 0
     active_player: Player = field(default_factory=Player)
@@ -36,7 +36,7 @@ class Game:
         if self.preferences.is_visibility_applied and me.can_win and opponent.can_win:
             opponent_units = opponent.units.intersection(me.visible)
         else:
-            opponent_units = opponent.units.copy()
+            opponent_units = opponent.units
 
         return GameView(
             id=self.id,
@@ -44,17 +44,17 @@ class Game:
             turns_left=self.turns_left,
             my_turn=(me == self.active_player),
             me=PlayerView(
-                units=me.units.copy(),
-                walls=me.walls.copy(),
-                reachable=me.reachable.copy(),
+                units=cast(frozenset[Cell], me.units),
+                walls=cast(frozenset[Cell], me.walls),
+                reachable=cast(frozenset[Cell], me.reachable),
                 view_data=me.view_data.copy(),
                 is_gone=me.is_gone,
                 is_defeated=me.is_defeated,
             ),
             opponent=PlayerView(
-                units=opponent_units,
-                walls=opponent.walls.copy(),
-                reachable=set(),
+                units=cast(frozenset[Cell], opponent_units),
+                walls=cast(frozenset[Cell], opponent.walls),
+                reachable=frozenset(),
                 view_data=opponent.view_data.copy(),
                 is_gone=opponent.is_gone,
                 is_defeated=opponent.is_defeated,
