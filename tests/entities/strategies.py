@@ -1,3 +1,5 @@
+from dataclasses import replace
+
 from hypothesis.strategies import booleans, composite, dictionaries, integers, text
 
 from paper_tactics.entities.game import Game
@@ -36,7 +38,7 @@ def games(draw, shallow=False) -> Game:
     turn_number = draw(integers(min_value=0, max_value=size * size * 2))
 
     if shallow:
-        game = Game(preferences=preferences)
+        game = Game(preferences=replace(preferences, is_visibility_applied=True))
     else:
         game = Game(
             preferences=preferences,
