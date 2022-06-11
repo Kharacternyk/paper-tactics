@@ -28,7 +28,7 @@ def test_units_and_walls_and_reachable_cells_are_valid(game):
     )
     for cells in sets:
         for x, y in cells:
-            assert 1 <= x <= game.size and 1 <= y <= game.size
+            assert 1 <= x <= game.preferences.size and 1 <= y <= game.preferences.size
 
 
 @given(games(shallow=True))
@@ -45,8 +45,11 @@ def test_opponents_walls_are_not_reachable(game):
 
 
 @given(games(shallow=True))
-def test_unit_advantage_is_no_more_than_3(game):
-    assert abs(len(game.active_player.units) - len(game.passive_player.units)) <= 3
+def test_unit_advantage_is_no_more_than_turn_count(game):
+    assert (
+        abs(len(game.active_player.units) - len(game.passive_player.units))
+        <= game.preferences.turn_count
+    )
 
 
 @given(games(shallow=True))

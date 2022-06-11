@@ -34,7 +34,7 @@ def test_game_is_unmodified_if_the_turn_is_illegal(
 ):
     game_repository = MockedGameRepository({game.id: game})
     logger = MockedLogger()
-    coordinates = integers(min_value=1, max_value=game.size)
+    coordinates = integers(min_value=1, max_value=game.preferences.size)
     cell = data.draw(tuples(coordinates, coordinates))
     assume(cell not in game.active_player.reachable)
 
@@ -51,7 +51,7 @@ def test_game_is_unmodified_if_passive_player_attempts_to_make_a_turn(
 ):
     game_repository = MockedGameRepository({game.id: game})
     logger = MockedLogger()
-    coordinates = integers(min_value=1, max_value=game.size)
+    coordinates = integers(min_value=1, max_value=game.preferences.size)
     cell = data.draw(tuples(coordinates, coordinates))
 
     make_turn(

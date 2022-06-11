@@ -1,4 +1,4 @@
-from hypothesis.strategies import booleans, composite
+from hypothesis.strategies import booleans, composite, iterables
 
 from tests.entities.strategies import match_requests
 from tests.use_cases.mocked_ports import MockedMatchRequestQueue, MockedPlayerNotifier
@@ -6,7 +6,7 @@ from tests.use_cases.mocked_ports import MockedMatchRequestQueue, MockedPlayerNo
 
 @composite
 def match_request_queues(draw) -> MockedMatchRequestQueue:
-    return MockedMatchRequestQueue(draw(match_requests()))
+    return MockedMatchRequestQueue(draw(iterables(match_requests())))
 
 
 @composite

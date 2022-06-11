@@ -1,7 +1,6 @@
 import os
 
 import boto3
-from fakeredis import FakeRedis
 from hypothesis import assume
 from hypothesis.strategies import composite, integers, text
 
@@ -9,14 +8,6 @@ from paper_tactics.adapters.dynamodb_game_repository import DynamodbGameReposito
 from paper_tactics.adapters.dynamodb_match_request_queue import (
     DynamodbMatchRequestQueue,
 )
-from paper_tactics.adapters.redis_match_request_queue import RedisMatchRequestQueue
-
-
-@composite
-def redis_match_request_queues(draw) -> RedisMatchRequestQueue:
-    return RedisMatchRequestQueue(
-        FakeRedis(decode_responses=True), draw(text(min_size=1))
-    )
 
 
 @composite
@@ -34,7 +25,7 @@ def _dynamodb_tables(draw):
     table_name = draw(text(min_size=3))
     key = draw(text(min_size=1))
     ttl_key = draw(text(min_size=1))
-    ttl_in_seconds = draw(integers(min_value=0, max_value=10**10))
+    ttl_in_seconds = draw(integers(min_value=0, max_value=10 ** 10))
 
     assume(key != ttl_key)
 

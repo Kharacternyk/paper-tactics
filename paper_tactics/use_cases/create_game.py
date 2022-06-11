@@ -16,7 +16,7 @@ def create_game(
     logger: Logger,
     request: MatchRequest,
 ) -> None:
-    queued_request = match_request_queue.pop()
+    queued_request = match_request_queue.pop(request.game_preferences)
 
     if not queued_request or queued_request.id == request.id:
         match_request_queue.put(request)

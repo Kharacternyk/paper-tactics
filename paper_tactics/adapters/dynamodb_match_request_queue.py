@@ -1,8 +1,10 @@
+from dataclasses import asdict
 from time import time
-from typing import Optional
+from typing import Any, Optional, cast
 
 import boto3
 
+from paper_tactics.entities.game_preferences import GamePreferences
 from paper_tactics.entities.match_request import MatchRequest
 from paper_tactics.ports.match_request_queue import MatchRequestQueue
 
@@ -20,19 +22,32 @@ class DynamodbMatchRequestQueue(MatchRequestQueue):
                 self._key: request.id,
                 self._ttl_key: self._get_expiration_time(),
                 "view_data": request.view_data,
+                "game_preferences": asdict(request.game_preferences),
             }
         )
 
-    def pop(self) -> Optional[MatchRequest]:
+    def pop(self, game_preferences: GamePreferences) -> Optional[MatchRequest]:
         queue = self._table.scan(ConsistentRead=True)
 
-        if not queue["Count"]:
-            return None
+        for i in range(queue["Count"]):
+            item = queue["Items"][i]
+            queued_preferences = self._parse_preferences(item["game_preferences"])
+            if queued_preferences == game_preferences:
+                self._table.delete_item(Key={self._key: item[self._key]})
+                return MatchRequest(
+                    cast(str, item[self._key]),
+                    cast(dict[str, str], item["view_data"]),
+                    game_preferences,
+                )
 
-        item = queue["Items"][0]
-        self._table.delete_item(Key={self._key: item[self._key]})
+        return None
 
-        return MatchRequest(item[self._key], item["view_data"])  # type: ignore
+    def _parse_preferences(self, item: Any) -> GamePreferences:
+        return GamePreferences(
+            int(item["size"]),
+            int(item["turn_count"]),
+            item["is_visibility_applied"],
+        )
 
     def _get_expiration_time(self) -> int:
         now = int(time())

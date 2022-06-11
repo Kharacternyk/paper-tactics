@@ -1,7 +1,8 @@
 from dataclasses import replace
-from typing import Optional
+from typing import Iterable, Optional
 
 from paper_tactics.entities.game import Game
+from paper_tactics.entities.game_preferences import GamePreferences
 from paper_tactics.entities.match_request import MatchRequest
 from paper_tactics.ports.game_repository import GameRepository, NoSuchGameException
 from paper_tactics.ports.logger import Logger
@@ -10,17 +11,29 @@ from paper_tactics.ports.player_notifier import PlayerGoneException, PlayerNotif
 
 
 class MockedMatchRequestQueue(MatchRequestQueue):
-    def __init__(self, request=Optional[MatchRequest]):
-        self.request = request
+    def __init__(self, requests: Optional[Iterable[MatchRequest]]):
+        self.requests: list = list(requests) if requests is not None else []
 
     def put(self, request=Optional[MatchRequest]) -> None:
-        assert self.request is None
+        assert not [
+            queued_request
+            for queued_request in self.requests
+            if queued_request.game_preferences == request.game_preferences
+        ]
         self.request = request
 
-    def pop(self) -> Optional[MatchRequest]:
-        result = self.request
-        self.request = None
-        return result
+    def pop(self, preferences: GamePreferences) -> Optional[MatchRequest]:
+        queued_request = next(
+            (
+                request
+                for request in self.requests
+                if request.game_preferences == preferences
+            ),
+            None,
+        )
+        if queued_request:
+            self.requests.remove(queued_request)
+        return queued_request
 
 
 class MockedPlayerNotifier(PlayerNotifier):

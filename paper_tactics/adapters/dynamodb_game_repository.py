@@ -1,9 +1,11 @@
+from dataclasses import asdict
 from time import time
 from typing import Any
 
 import boto3
 
 from paper_tactics.entities.game import Game
+from paper_tactics.entities.game_preferences import GamePreferences
 from paper_tactics.entities.player import Player
 from paper_tactics.ports.game_repository import GameRepository, NoSuchGameException
 
@@ -18,10 +20,10 @@ class DynamodbGameRepository(GameRepository):
     def store(self, game: Game) -> None:
         serialized_game: dict[str, Any] = {
             self._key: game.id,
-            "size": game.size,
             "turns-left": game.turns_left,
             "active-player": self._serialize_player(game.active_player),
             "passive-player": self._serialize_player(game.passive_player),
+            "preferences": asdict(game.preferences),
             self._ttl_key: self._get_expiration_time(),
         }
 
@@ -37,10 +39,14 @@ class DynamodbGameRepository(GameRepository):
 
         return Game(
             id=serialized_game[self._key],
-            size=int(serialized_game["size"]),
             turns_left=int(serialized_game["turns-left"]),
             active_player=self._deserialize_player(serialized_game["active-player"]),
             passive_player=self._deserialize_player(serialized_game["passive-player"]),
+            preferences=GamePreferences(
+                serialized_game["preferences"]["size"],
+                serialized_game["preferences"]["turn_count"],
+                serialized_game["preferences"]["is_visibility_applied"],
+            ),
         )
 
     def _serialize_player(self, player: Player) -> dict[str, Any]:

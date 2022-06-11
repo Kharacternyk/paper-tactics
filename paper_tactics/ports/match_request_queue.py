@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
+from paper_tactics.entities.game_preferences import GamePreferences
 from paper_tactics.entities.match_request import MatchRequest
 
 
@@ -10,5 +11,5 @@ class MatchRequestQueue(ABC):
         ...
 
     @abstractmethod
-    def pop(self) -> Optional[MatchRequest]:
+    def pop(self, game_preferences: GamePreferences) -> Optional[MatchRequest]:
         ...
