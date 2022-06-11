@@ -43,8 +43,8 @@ class DynamodbGameRepository(GameRepository):
             active_player=self._deserialize_player(serialized_game["active-player"]),
             passive_player=self._deserialize_player(serialized_game["passive-player"]),
             preferences=GamePreferences(
-                serialized_game["preferences"]["size"],
-                serialized_game["preferences"]["turn_count"],
+                int(serialized_game["preferences"]["size"]),
+                int(serialized_game["preferences"]["turn_count"]),
                 serialized_game["preferences"]["is_visibility_applied"],
             ),
         )
