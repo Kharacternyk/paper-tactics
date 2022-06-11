@@ -40,7 +40,6 @@ class Game:
 
         return GameView(
             id=self.id,
-            size=self.preferences.size,
             turns_left=self.turns_left,
             my_turn=(me == self.active_player),
             me=PlayerView(

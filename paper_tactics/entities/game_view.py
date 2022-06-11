@@ -7,7 +7,6 @@ from paper_tactics.entities.player_view import PlayerView
 @dataclass(frozen=True)
 class GameView:
     id: str
-    size: int
     turns_left: int
     my_turn: bool
     me: PlayerView
