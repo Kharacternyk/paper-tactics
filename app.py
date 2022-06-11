@@ -13,6 +13,7 @@ from paper_tactics.adapters.in_memory_match_request_queue import (
 from paper_tactics.adapters.stdout_logger import StdoutLogger
 from paper_tactics.adapters.websockets_player_notifier import WebsocketsPlayerNotifier
 from paper_tactics.entities.cell import Cell
+from paper_tactics.entities.game_preferences import GamePreferences
 from paper_tactics.entities.match_request import MatchRequest
 from paper_tactics.use_cases.concede import concede
 from paper_tactics.use_cases.create_game import create_game
@@ -35,7 +36,8 @@ async def handler(websocket: WebSocketServerProtocol) -> None:
             return
 
         if event.get("action") == "create-game":
-            request = MatchRequest(uuid4().hex, event.get("viewData", {}))
+            preferences = GamePreferences(**event.get("preferences", {}))
+            request = MatchRequest(uuid4().hex, event.get("viewData", {}), preferences)
             player_notifier.websockets[request.id] = websocket
             create_game(
                 game_repository, match_request_queue, player_notifier, logger, request

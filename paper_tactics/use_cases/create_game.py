@@ -25,7 +25,10 @@ def create_game(
     active_player = Player(id=queued_request.id, view_data=queued_request.view_data)
     passive_player = Player(id=request.id, view_data=request.view_data)
     game = Game(
-        id=uuid4().hex, active_player=active_player, passive_player=passive_player
+        id=uuid4().hex,
+        active_player=active_player,
+        passive_player=passive_player,
+        preferences=request.game_preferences,
     )
 
     game.init_players()

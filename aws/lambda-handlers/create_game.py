@@ -9,6 +9,7 @@ from paper_tactics.adapters.dynamodb_match_request_queue import (
     DynamodbMatchRequestQueue,
 )
 from paper_tactics.adapters.stdout_logger import StdoutLogger
+from paper_tactics.entities.game_preferences import GamePreferences
 from paper_tactics.entities.match_request import MatchRequest
 from paper_tactics.use_cases.create_game import create_game
 
@@ -42,9 +43,11 @@ def handler(event: dict[str, Any], context: Any) -> dict[str, int]:
     try:
         if len(event["body"]) > 2048:
             raise ApiAbuseException(event["body"])
+        body = json.loads(event["body"])
         request = MatchRequest(
             event["requestContext"]["connectionId"],
-            json.loads(event["body"]).get("viewData", {}),
+            body.get("viewData", {}),
+            GamePreferences(**body.get("preferences", {})),
         )
     except Exception as e:
         logger.log_exception(e)
