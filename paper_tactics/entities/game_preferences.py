@@ -9,4 +9,9 @@ class GamePreferences:
 
     @property
     def valid(self) -> bool:
-        return 3 <= self.size <= 12 and 1 <= self.turn_count <= 7
+        return (
+            isinstance(self.size, int)
+            and isinstance(self.turn_count, int)
+            and 3 <= self.size <= 12
+            and 1 <= self.turn_count <= 7
+        )
