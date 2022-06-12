@@ -7,7 +7,6 @@ license = "AGPL-3.0-or-later"
 
 [tool.poetry.dependencies]
 python = "~3.9"
-redis = "^4.1.4"
 websockets = "^10.3"
 bidict = "^0.22.0"
 nest-asyncio = "^1.5.5"
@@ -24,8 +23,6 @@ pytest-cov = {extras = ["toml"], version = "^3.0.0"}
 mypy = "^0.960"
 boto3-stubs = {extras = ["dynamodb", "apigateway"], version = "^1.20.54"}
 isort = "^5.10.1"
-fakeredis = "^1.7.1"
-types-redis = "^4.1.16"
 pytest-testmon = "^1.2.3"
 aws-sam-cli = "^1.51.0"
 Jinja2 = "2.11.3"
@@ -50,10 +47,6 @@ exclude_lines = [
 
 [[tool.mypy.overrides]]
 module = "moto"
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = "fakeredis"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
