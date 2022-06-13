@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Final, Iterable, cast
 
-from paper_tactics.entities.bot import GameBot
 from paper_tactics.entities.cell import Cell
+from paper_tactics.entities.game_bot import GameBot
 from paper_tactics.entities.game_preferences import GamePreferences
 from paper_tactics.entities.game_view import GameView
 from paper_tactics.entities.player import Player
