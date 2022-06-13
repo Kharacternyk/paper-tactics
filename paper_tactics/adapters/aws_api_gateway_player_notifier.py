@@ -11,6 +11,9 @@ class AwsApiGatewayPlayerNotifier(PlayerNotifier):
         )
 
     def notify(self, player_id: str, game: Game) -> None:
+        if not player_id:
+            return
+
         view = game.get_view(player_id)
 
         try:

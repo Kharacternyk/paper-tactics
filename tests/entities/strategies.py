@@ -14,6 +14,7 @@ def game_preferences(draw) -> GamePreferences:
         draw(integers(min_value=2, max_value=7)),
         draw(integers(min_value=2, max_value=5)),
         draw(booleans()),
+        False,
     )
 
 

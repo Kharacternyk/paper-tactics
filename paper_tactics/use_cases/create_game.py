@@ -1,3 +1,4 @@
+from typing import Optional
 from uuid import uuid4
 
 from paper_tactics.entities.game import Game
@@ -19,11 +20,17 @@ def create_game(
     if not request.game_preferences.valid:
         return
 
-    queued_request = match_request_queue.pop(request.game_preferences)
+    queued_request: Optional[MatchRequest]
 
-    if not queued_request or queued_request.id == request.id:
-        match_request_queue.put(request)
-        return
+    if request.game_preferences.is_against_bot:
+        queued_request = request
+        request = MatchRequest(game_preferences=request.game_preferences)
+    else:
+        queued_request = match_request_queue.pop(request.game_preferences)
+
+        if not queued_request or queued_request.id == request.id:
+            match_request_queue.put(request)
+            return
 
     active_player = Player(id=queued_request.id, view_data=queued_request.view_data)
     passive_player = Player(id=request.id, view_data=request.view_data)

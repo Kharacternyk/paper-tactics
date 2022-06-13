@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Final, Iterable, cast
 
+from paper_tactics.entities.bot import GameBot
 from paper_tactics.entities.cell import Cell
 from paper_tactics.entities.game_preferences import GamePreferences
 from paper_tactics.entities.game_view import GameView
@@ -67,14 +68,7 @@ class Game:
         ):
             raise IllegalTurnException(self.id, player_id, cell)
 
-        if cell in self.passive_player.units:
-            self.passive_player.units.remove(cell)
-            self.active_player.walls.add(cell)
-            self._rebuild_reachable_set(self.passive_player, self.active_player)
-        else:
-            self.active_player.units.add(cell)
-
-        self._rebuild_reachable_set(self.active_player, self.passive_player)
+        self._make_turn(cell, self.active_player, self.passive_player)
         self._decrement_turns()
 
     def get_adjacent_cells(self, cell: Cell) -> Iterable[Cell]:
@@ -87,6 +81,36 @@ class Game:
     def is_valid_cell(self, cell: Cell) -> bool:
         x, y = cell
         return 1 <= x <= self.preferences.size and 1 <= y <= self.preferences.size
+
+    def _decrement_turns(self) -> None:
+        self.turns_left -= 1
+        if not self.turns_left:
+            if self.preferences.is_against_bot:
+                game_bot = GameBot()
+                for i in range(self.preferences.turn_count):
+                    if not self.passive_player.reachable:
+                        self.passive_player.is_defeated = True
+                        break
+                    cell = game_bot.make_turn(self.get_view(self.passive_player.id))
+                    self._make_turn(cell, self.passive_player, self.active_player)
+            else:
+                self.active_player, self.passive_player = (
+                    self.passive_player,
+                    self.active_player,
+                )
+            self.turns_left = self.preferences.turn_count
+        if not self.active_player.reachable and not self.passive_player.is_defeated:
+            self.active_player.is_defeated = True
+
+    def _make_turn(self, cell: Cell, player: Player, opponent: Player) -> None:
+        if cell in opponent.units:
+            opponent.units.remove(cell)
+            player.walls.add(cell)
+            self._rebuild_reachable_set(opponent, player)
+        else:
+            player.units.add(cell)
+
+        self._rebuild_reachable_set(player, opponent)
 
     def _rebuild_reachable_set(self, player: Player, opponent: Player) -> None:
         player.reachable.clear()
@@ -108,17 +132,6 @@ class Game:
             if not new_sources:
                 break
             sources.update(new_sources)
-
-    def _decrement_turns(self) -> None:
-        self.turns_left -= 1
-        if not self.turns_left:
-            self.active_player, self.passive_player = (
-                self.passive_player,
-                self.active_player,
-            )
-            self.turns_left = self.preferences.turn_count
-        if not self.active_player.reachable:
-            self.active_player.is_defeated = True
 
 
 class IllegalTurnException(Exception):

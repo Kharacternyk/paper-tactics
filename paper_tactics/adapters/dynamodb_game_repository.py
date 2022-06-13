@@ -46,6 +46,7 @@ class DynamodbGameRepository(GameRepository):
                 int(serialized_game["preferences"]["size"]),
                 int(serialized_game["preferences"]["turn_count"]),
                 serialized_game["preferences"]["is_visibility_applied"],
+                serialized_game["preferences"]["is_against_bot"],
             ),
         )
 

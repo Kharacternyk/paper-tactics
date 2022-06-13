@@ -6,6 +6,7 @@ class GamePreferences:
     size: int = 10
     turn_count: int = 3
     is_visibility_applied: bool = False
+    is_against_bot: bool = False
 
     @property
     def valid(self) -> bool:
