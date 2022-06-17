@@ -65,6 +65,9 @@ class Game:
         if (
             player_id != self.active_player.id
             or cell not in self.active_player.reachable
+            or not all(
+                player.can_win for player in (self.active_player, self.passive_player)
+            )
         ):
             raise IllegalTurnException(self.id, player_id, cell)
 
