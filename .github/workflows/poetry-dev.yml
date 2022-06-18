@@ -3,6 +3,8 @@ name: CI
 on:
   push:
     branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
   ci:
@@ -18,8 +20,10 @@ jobs:
     - run: poetry install
     - run: poetry run pre-commit run --all-files
     - run: poetry run sam build
+      if: github.ref == 'refs/heads/master'
       working-directory: ./aws
     - run: poetry run sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
+      if: github.ref == 'refs/heads/master'
       working-directory: ./aws
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
