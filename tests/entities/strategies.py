@@ -1,5 +1,3 @@
-from dataclasses import replace
-
 from hypothesis.strategies import booleans, composite, dictionaries, integers, text
 
 from paper_tactics.entities.game import Game
@@ -9,21 +7,25 @@ from paper_tactics.entities.player import Player
 
 
 @composite
-def game_preferences(draw) -> GamePreferences:
+def game_preferences(
+    draw, is_against_bot=None, is_visibility_applied=None
+) -> GamePreferences:
     return GamePreferences(
-        draw(integers(min_value=2, max_value=7)),
-        draw(integers(min_value=2, max_value=5)),
-        draw(booleans()),
-        False,
+        size=draw(integers(min_value=2, max_value=7)),
+        turn_count=draw(integers(min_value=2, max_value=5)),
+        is_visibility_applied=draw(booleans())
+        if is_visibility_applied is None
+        else is_visibility_applied,
+        is_against_bot=draw(booleans()) if is_against_bot is None else is_against_bot,
     )
 
 
 @composite
 def match_requests(draw) -> MatchRequest:
     return MatchRequest(
-        draw(text(min_size=1)),
-        draw(dictionaries(text(), text())),
-        draw(game_preferences()),
+        id=draw(text(min_size=1)),
+        view_data=draw(dictionaries(text(), text())),
+        game_preferences=draw(game_preferences()),
     )
 
 
@@ -33,13 +35,16 @@ def players(draw) -> Player:
 
 
 @composite
-def games(draw, shallow=False) -> Game:
-    preferences = draw(game_preferences())
-    size = preferences.size
-    turn_number = draw(integers(min_value=0, max_value=size * size * 2))
+def games(draw, shallow=False, is_visibility_applied=None) -> Game:
+    preferences = draw(
+        game_preferences(
+            is_against_bot=False, is_visibility_applied=is_visibility_applied
+        )
+    )
+    turn_number = draw(integers(min_value=0, max_value=preferences.size ** 2 * 2))
 
     if shallow:
-        game = Game(preferences=replace(preferences, is_visibility_applied=True))
+        game = Game(preferences=preferences)
     else:
         game = Game(
             preferences=preferences,
