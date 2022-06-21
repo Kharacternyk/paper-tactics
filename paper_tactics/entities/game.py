@@ -113,7 +113,19 @@ class Game:
         else:
             player.units.add(cell)
 
-        self._rebuild_reachable_set(player, opponent)
+        if self._is_opening:
+            player.reachable.remove(cell)
+            for adjacent_cell in self.get_adjacent_cells(cell):
+                if adjacent_cell not in player.units:
+                    player.reachable.add(adjacent_cell)
+                    if self.preferences.is_visibility_applied:
+                        player.visible.add(adjacent_cell)
+        else:
+            self._rebuild_reachable_set(player, opponent)
+
+    @property
+    def _is_opening(self) -> bool:
+        return not self.active_player.walls and not self.passive_player.walls
 
     def _rebuild_reachable_set(self, player: Player, opponent: Player) -> None:
         player.reachable.clear()
