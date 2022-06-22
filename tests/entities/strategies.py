@@ -35,10 +35,10 @@ def players(draw) -> Player:
 
 
 @composite
-def games(draw, shallow=False, is_visibility_applied=None) -> Game:
+def games(draw, shallow=False, is_visibility_applied=None, is_against_bot=None) -> Game:
     preferences = draw(
         game_preferences(
-            is_against_bot=False, is_visibility_applied=is_visibility_applied
+            is_against_bot=is_against_bot, is_visibility_applied=is_visibility_applied
         )
     )
     turn_number = draw(integers(min_value=0, max_value=preferences.size ** 2 * 2))
@@ -56,11 +56,10 @@ def games(draw, shallow=False, is_visibility_applied=None) -> Game:
     game.init_players()
 
     for i in range(turn_number):
-        reachable = list(game.active_player.reachable)
-
-        if not reachable:
+        if not game.active_player.can_win or game.passive_player.can_win:
             break
 
+        reachable = list(game.active_player.reachable)
         turn = reachable[draw(integers(min_value=0, max_value=len(reachable) - 1))]
         game.make_turn(game.active_player.id, turn)
 
