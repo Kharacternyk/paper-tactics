@@ -5,9 +5,9 @@ from paper_tactics.entities.cell import Cell
 from paper_tactics.entities.game_view import GameView
 
 
-@dataclass
+@dataclass(frozen=True)
 class GameBot:
-    opponent_unit_weight: int = 7
+    opponent_unit_weight: float = 7
 
     def make_turn(self, game_view: GameView) -> Cell:
         weights = [
