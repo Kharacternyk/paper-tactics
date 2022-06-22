@@ -28,6 +28,7 @@ aws-sam-cli = "^1.51.0"
 Jinja2 = "2.11.3"
 itsdangerous = "2.0.1"
 Werkzeug = "2.0.3"
+aws-lambda-powertools = "^1.26.2"
 
 [tool.isort]
 profile = "black"

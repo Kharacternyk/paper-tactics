@@ -128,6 +128,9 @@ Resources:
     Properties:
       FunctionName: paper-tactics-make-turn
       Handler: make_turn.handler
+      Tracing: Active
+      Layers:
+        - !Sub arn:aws:lambda:${AWS::Region}:017000801446:layer:AWSLambdaPowertoolsPython:21
       Policies:
         - DynamoDBCrudPolicy:
             TableName: paper-tactics-game-states
