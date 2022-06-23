@@ -1,4 +1,5 @@
-from hypothesis import assume
+from dataclasses import replace
+
 from hypothesis.strategies import booleans, composite, dictionaries, integers, text
 
 from paper_tactics.entities.game import Game
@@ -51,13 +52,16 @@ def games(draw, shallow=False, is_visibility_applied=None, is_against_bot=None) 
             passive_player=Player("b"),
         )
     else:
+        active_player = draw(players())
+        passive_player = draw(players())
         game = Game(
             preferences=preferences,
             id=draw(text(min_size=1)),
-            active_player=draw(players()),
-            passive_player=draw(players()),
+            active_player=active_player,
+            passive_player=replace(passive_player, id="*" + active_player.id)
+            if active_player.id == passive_player.id
+            else passive_player,
         )
-        assume(game.active_player.id != game.passive_player.id)
 
     game.init_players()
 
