@@ -35,10 +35,3 @@ repos:
         entry: mypy --strict
         exclude: *lax-files
         types: [python]
-
-      - id: pytest
-        name: pytest
-        language: system
-        entry: pytest
-        types: [python]
-        pass_filenames: false
