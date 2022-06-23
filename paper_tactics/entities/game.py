@@ -18,6 +18,7 @@ class Game:
     passive_player: Player = field(default_factory=Player)
 
     def init_players(self) -> None:
+        assert self.active_player.id != self.passive_player.id
         self.active_player.units.add((1, 1))
         self.passive_player.units.add((self.preferences.size, self.preferences.size))
         self._rebuild_reachable_set(self.active_player, self.passive_player)
@@ -95,6 +96,7 @@ class Game:
                         self.passive_player.is_defeated = True
                         break
                     cell = game_bot.make_turn(self.get_view(self.passive_player.id))
+                    assert cell in self.passive_player.reachable
                     self._make_turn(cell, self.passive_player, self.active_player)
             else:
                 self.active_player, self.passive_player = (
