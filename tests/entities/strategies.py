@@ -1,3 +1,4 @@
+from hypothesis import assume
 from hypothesis.strategies import booleans, composite, dictionaries, integers, text
 
 from paper_tactics.entities.game import Game
@@ -44,7 +45,11 @@ def games(draw, shallow=False, is_visibility_applied=None, is_against_bot=None) 
     turn_number = draw(integers(min_value=0, max_value=preferences.size ** 2 * 2))
 
     if shallow:
-        game = Game(preferences=preferences)
+        game = Game(
+            preferences=preferences,
+            active_player=Player("a"),
+            passive_player=Player("b"),
+        )
     else:
         game = Game(
             preferences=preferences,
@@ -52,11 +57,12 @@ def games(draw, shallow=False, is_visibility_applied=None, is_against_bot=None) 
             active_player=draw(players()),
             passive_player=draw(players()),
         )
+        assume(game.active_player.id != game.passive_player.id)
 
     game.init_players()
 
     for i in range(turn_number):
-        if not game.active_player.can_win or game.passive_player.can_win:
+        if not game.active_player.can_win or not game.passive_player.can_win:
             break
 
         reachable = list(game.active_player.reachable)
