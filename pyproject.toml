@@ -19,7 +19,6 @@ flake8 = "^4.0.1"
 pre-commit = "^2.16.0"
 boto3 = "^1.20.31"
 moto = {extras = ["dynamodb"], version = "^2.3.1"}
-pytest-cov = {extras = ["toml"], version = "^3.0.0"}
 mypy = "^0.960"
 boto3-stubs = {extras = ["dynamodb", "apigateway"], version = "^1.20.54"}
 isort = "^5.10.1"
@@ -29,6 +28,7 @@ Jinja2 = "2.11.3"
 itsdangerous = "2.0.1"
 Werkzeug = "2.0.3"
 aws-lambda-powertools = "^1.26.2"
+coverage = "^6.4.1"
 
 [tool.isort]
 profile = "black"

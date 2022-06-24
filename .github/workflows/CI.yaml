@@ -19,7 +19,9 @@ jobs:
         poetry-version: 1.1.11
     - run: poetry install
     - run: poetry run pre-commit run --all-files
-    - run: poetry run pytest --cov=paper_tactics --cov-report=xml --no-testmon
+    - run: poetry run coverage run --source=paper_tactics -m pytest
+    - run: poetry run coverage report
+    - run: poetry run coverage xml
     - uses: codecov/codecov-action@v2
     - run: poetry run sam build
       if: github.ref == 'refs/heads/master'
