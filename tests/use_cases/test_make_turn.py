@@ -18,7 +18,7 @@ def test_game_is_updated_if_the_turn_is_legal(
 ):
     game_repository = MockedGameRepository({game.id: game})
     logger = MockedLogger()
-    assume(game.active_player.reachable)
+    assume(game.active_player.can_win and game.passive_player.can_win)
     cell = data.draw(sampled_from(list(game.active_player.reachable)))
 
     make_turn(
@@ -67,7 +67,7 @@ def test_player_are_notified_when_a_valid_turn_is_made(
 ):
     game_repository = MockedGameRepository({game.id: game})
     logger = MockedLogger()
-    assume(game.active_player.reachable)
+    assume(game.active_player.can_win and game.passive_player.can_win)
     cell = data.draw(sampled_from(list(game.active_player.reachable)))
 
     make_turn(
