@@ -1,4 +1,4 @@
-from hypothesis import given, settings
+from hypothesis import given
 from moto import mock_dynamodb2
 
 from paper_tactics.adapters.in_memory_match_request_queue import (
@@ -21,14 +21,12 @@ def _test_request_is_popped_after_stored_and_read_back(queue, request):
 
 @mock_dynamodb2
 @given(dynamodb_match_request_queues(), game_preferences())
-@settings(max_examples=10)
 def test_pop_on_empty_queue_returns_none_in_dynamodb(queue, preferences):
     _test_pop_on_empty_queue_returns_none(queue, preferences)
 
 
 @mock_dynamodb2
 @given(dynamodb_match_request_queues(), match_requests())
-@settings(max_examples=10)
 def test_request_is_popped_after_stored_and_read_back_in_dynamodb(queue, request):
     _test_request_is_popped_after_stored_and_read_back(queue, request)
 

@@ -1,4 +1,4 @@
-from hypothesis import given, settings
+from hypothesis import given
 from hypothesis.strategies import text
 from moto import mock_dynamodb2
 from pytest import raises
@@ -24,7 +24,6 @@ def _test_no_such_game_exception_is_thrown_if_game_does_not_exist(
 
 @mock_dynamodb2
 @given(dynamodb_game_repositories(), games())
-@settings(max_examples=5)
 def test_game_is_not_changed_if_written_and_read_back_in_dynamodb(
     game_repository, game
 ):
@@ -33,7 +32,6 @@ def test_game_is_not_changed_if_written_and_read_back_in_dynamodb(
 
 @mock_dynamodb2
 @given(dynamodb_game_repositories(), text())
-@settings(max_examples=10)
 def test_no_such_game_exception_is_thrown_if_game_does_not_exist_in_dynamodb(
     game_repository, game_id
 ):
