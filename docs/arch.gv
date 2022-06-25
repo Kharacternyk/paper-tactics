@@ -1,0 +1,29 @@
+digraph Arch {
+    node [
+        fontname=monospace
+        shape=box
+        style="rounded, bold"
+    ]
+    e [
+        label=Entities
+    ]
+    p [
+        label=Ports
+    ]
+    uc [
+        label="Use Cases"
+    ]
+    ad [
+        label=Adapters
+    ]
+    ap [
+        label=Application
+    ]
+
+    {uc ad} -> {e p}
+    p -> e
+    ap -> {uc ad}
+    ap -> e [
+        weight=0
+    ]
+}
