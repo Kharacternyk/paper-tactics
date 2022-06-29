@@ -14,7 +14,7 @@ nest-asyncio = "^1.5.5"
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
 hypothesis = "^6.46.10"
-black = "21.12b0"
+black = "^22.6.0"
 flake8 = "^4.0.1"
 pre-commit = "^2.16.0"
 boto3 = "^1.20.31"
