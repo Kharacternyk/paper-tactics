@@ -43,7 +43,7 @@ def games(draw, shallow=False, is_visibility_applied=None, is_against_bot=None) 
             is_against_bot=is_against_bot, is_visibility_applied=is_visibility_applied
         )
     )
-    turn_number = draw(integers(min_value=0, max_value=preferences.size ** 2 * 2))
+    turn_number = draw(integers(min_value=0, max_value=preferences.size**2 * 2))
 
     if shallow:
         game = Game(
