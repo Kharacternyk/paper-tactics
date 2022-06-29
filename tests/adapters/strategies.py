@@ -25,7 +25,7 @@ def _dynamodb_tables(draw):
     table_name = draw(text(min_size=3))
     key = draw(text(min_size=1))
     ttl_key = draw(text(min_size=1))
-    ttl_in_seconds = draw(integers(min_value=0, max_value=10 ** 10))
+    ttl_in_seconds = draw(integers(min_value=0, max_value=10**10))
 
     assume(key != ttl_key)
 
