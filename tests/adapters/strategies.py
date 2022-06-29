@@ -1,7 +1,6 @@
 import os
 
 import boto3
-from hypothesis import assume
 from hypothesis.strategies import composite, integers, text
 
 from paper_tactics.adapters.dynamodb_game_repository import DynamodbGameRepository
@@ -27,7 +26,8 @@ def _dynamodb_tables(draw):
     ttl_key = draw(text(min_size=1))
     ttl_in_seconds = draw(integers(min_value=0, max_value=10**10))
 
-    assume(key != ttl_key)
+    if key == ttl_key:
+        ttl_key = "_" + key
 
     os.environ["AWS_DEFAULT_REGION"] = "eu-central-1"
 
