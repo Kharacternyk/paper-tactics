@@ -23,10 +23,6 @@ mypy = "^0.960"
 boto3-stubs = {extras = ["dynamodb", "apigateway"], version = "^1.20.54"}
 isort = "^5.10.1"
 pytest-testmon = "^1.2.3"
-aws-sam-cli = "^1.51.0"
-Jinja2 = "2.11.3"
-itsdangerous = "2.0.1"
-Werkzeug = "2.0.3"
 aws-lambda-powertools = "^1.26.2"
 coverage = "^6.4.1"
 
