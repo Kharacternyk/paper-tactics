@@ -1,36 +1,10 @@
-[tool.poetry]
-name = "paper-tactics"
-version = "0.1.0"
-description = ""
-authors = ["Nazar Vinnichuk <nazar@vinnich.uk>"]
-license = "AGPL-3.0-or-later"
-
-[tool.poetry.dependencies]
-python = "~3.9"
-websockets = "^10.3"
-bidict = "^0.22.0"
-nest-asyncio = "^1.5.5"
-
-[tool.poetry.dev-dependencies]
-pytest = "^7.1.2"
-hypothesis = "^6.46.10"
-black = "^22.6.0"
-flake8 = "^4.0.1"
-pre-commit = "^2.16.0"
-boto3 = "^1.20.31"
-moto = {extras = ["dynamodb"], version = "^2.3.1"}
-mypy = "^0.960"
-boto3-stubs = {extras = ["dynamodb", "apigateway"], version = "^1.20.54"}
-isort = "^5.10.1"
-pytest-testmon = "^1.2.3"
-aws-lambda-powertools = "^1.26.2"
-coverage = "^6.4.1"
-
-[tool.isort]
-profile = "black"
-
+# FIXME Install moto
 [tool.pytest.ini_options]
-addopts = "--testmon --import-mode importlib"
+addopts = """
+    --testmon
+    --ignore tests/adapters/test_match_request_queues.py
+    --ignore tests/adapters/test_game_repositories.py
+"""
 
 [tool.coverage.run]
 branch = true
@@ -41,15 +15,3 @@ exclude_lines = [
     'def __repr__',
     '\s\.\.\.$'
 ]
-
-[[tool.mypy.overrides]]
-module = "moto"
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = "nest_asyncio"
-ignore_missing_imports = true
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
