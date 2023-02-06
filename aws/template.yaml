@@ -90,11 +90,11 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName: paper-tactics-game-states
         - Statement:
-          - Effect: Allow
-            Action:
-              - execute-api:ManageConnections
-            Resource:
-              - !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WebSocketApi}/*
+            - Effect: Allow
+              Action:
+                - execute-api:ManageConnections
+              Resource:
+                - !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WebSocketApi}/*
 
   CreateGamePermission:
     Type: AWS::Lambda::Permission
@@ -135,11 +135,11 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName: paper-tactics-game-states
         - Statement:
-          - Effect: Allow
-            Action:
-              - execute-api:ManageConnections
-            Resource:
-              - !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WebSocketApi}/*
+            - Effect: Allow
+              Action:
+                - execute-api:ManageConnections
+              Resource:
+                - !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WebSocketApi}/*
 
   MakeTurnPermission:
     Type: AWS::Lambda::Permission
@@ -177,11 +177,11 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName: paper-tactics-game-states
         - Statement:
-          - Effect: Allow
-            Action:
-              - execute-api:ManageConnections
-            Resource:
-              - !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WebSocketApi}/*
+            - Effect: Allow
+              Action:
+                - execute-api:ManageConnections
+              Resource:
+                - !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WebSocketApi}/*
 
   ConcedePermission:
     Type: AWS::Lambda::Permission
@@ -194,8 +194,8 @@ Resources:
 
 Outputs:
   WebSocketURI:
-    Value: !Join 
-      - ''
+    Value: !Join
+      - ""
       - - wss://
         - !Ref WebSocketApi
         - .execute-api.
