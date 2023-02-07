@@ -24,6 +24,7 @@ class DynamodbGameRepository(GameRepository):
             "active-player": self._serialize_player(game.active_player),
             "passive-player": self._serialize_player(game.passive_player),
             "preferences": asdict(game.preferences),
+            "trenches": list(game.trenches),
             self._ttl_key: self._get_expiration_time(),
         }
 
@@ -48,6 +49,7 @@ class DynamodbGameRepository(GameRepository):
                 serialized_game["preferences"]["is_visibility_applied"],
                 serialized_game["preferences"]["is_against_bot"],
             ),
+            trenches=frozenset(serialized_game["trenches"]),
         )
 
     def _serialize_player(self, player: Player) -> dict[str, Any]:

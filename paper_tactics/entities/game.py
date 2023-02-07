@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from typing import Final, Iterable, cast
+from random import random
 
 from paper_tactics.entities.cell import Cell
 from paper_tactics.entities.game_bot import GameBot
@@ -12,17 +13,20 @@ from paper_tactics.entities.player_view import PlayerView
 @dataclass
 class Game:
     id: Final[str] = ""
-    preferences: Final[GamePreferences] = field(default_factory=GamePreferences)
+    preferences: Final[GamePreferences] = GamePreferences()
     turns_left: int = 0
     active_player: Player = field(default_factory=Player)
     passive_player: Player = field(default_factory=Player)
+    trenches: frozenset[Cell] = frozenset()
 
+    # FIXME rename
     def init_players(self) -> None:
         assert self.active_player.id != self.passive_player.id
         self.active_player.units.add((1, 1))
         self.passive_player.units.add((self.preferences.size, self.preferences.size))
         self._rebuild_reachable_set(self.active_player, self.passive_player)
         self._rebuild_reachable_set(self.passive_player, self.active_player)
+        self.trenches = frozenset(self._generate_trenches())
         self.turns_left = self.preferences.turn_count
 
     def get_view(self, player_id: str) -> GameView:
@@ -39,6 +43,11 @@ class Game:
             opponent_units = opponent.units.intersection(me.visible)
         else:
             opponent_units = opponent.units
+
+        if self.preferences.is_visibility_applied:
+            trenches = self.trenches.intersection(me.visible)
+        else:
+            trenches = self.trenches
 
         return GameView(
             id=self.id,
@@ -60,6 +69,7 @@ class Game:
                 is_gone=opponent.is_gone,
                 is_defeated=opponent.is_defeated,
             ),
+            trenches=trenches,
         )
 
     def make_turn(self, player_id: str, cell: Cell) -> None:
@@ -111,28 +121,20 @@ class Game:
         if cell in opponent.units:
             opponent.units.remove(cell)
             player.walls.add(cell)
-            self._rebuild_reachable_set(opponent, player)
+        elif cell in self.trenches:
+            player.walls.add(cell)
         else:
             player.units.add(cell)
-
-        if self._is_opening:
-            player.reachable.remove(cell)
-            for adjacent_cell in self.get_adjacent_cells(cell):
-                if adjacent_cell not in player.units:
-                    player.reachable.add(adjacent_cell)
-                    if self.preferences.is_visibility_applied:
-                        player.visible.add(adjacent_cell)
-        else:
-            self._rebuild_reachable_set(player, opponent)
-
-    @property
-    def _is_opening(self) -> bool:
-        return not self.active_player.walls and not self.passive_player.walls
+        self._rebuild_reachable_set(player, opponent)
 
     def _rebuild_reachable_set(self, player: Player, opponent: Player) -> None:
         player.reachable.clear()
         if self.preferences.is_visibility_applied:
-            player.visible = {cell for cell in player.visible if cell in opponent.units}
+            player.visible = {
+                cell
+                for cell in player.visible
+                if cell in opponent.units or cell in self.trenches
+            }
         sources = player.units.copy()
         while True:
             new_sources = set()
@@ -149,6 +151,19 @@ class Game:
             if not new_sources:
                 break
             sources.update(new_sources)
+
+    def _generate_trenches(self) -> Iterable[Cell]:
+        size = self.preferences.size
+        half = (size + 1) // 2
+        for x in range(size):
+            for y in range(half):
+                if (
+                    (y < half - 1 or x < half)
+                    and (x, y) != (0, 0)
+                    and random() <= self.preferences.trench_density
+                ):
+                    yield x + 1, y + 1
+                    yield size - x, size - y
 
 
 class IllegalTurnException(Exception):
