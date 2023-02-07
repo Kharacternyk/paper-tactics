@@ -1,6 +1,7 @@
 from dataclasses import asdict
 from time import time
 from typing import Any
+from decimal import Decimal
 
 import boto3
 
@@ -18,6 +19,10 @@ class DynamodbGameRepository(GameRepository):
         self._table = boto3.resource("dynamodb").Table(table_name)
 
     def store(self, game: Game) -> None:
+        serialized_preferences = asdict(game.preferences)
+        serialized_preferences["trench_density"] = Decimal(
+            serialized_preferences["trench_density"]
+        )
         serialized_game: dict[str, Any] = {
             self._key: game.id,
             "turns-left": game.turns_left,
@@ -48,6 +53,7 @@ class DynamodbGameRepository(GameRepository):
                 int(serialized_game["preferences"]["turn_count"]),
                 serialized_game["preferences"]["is_visibility_applied"],
                 serialized_game["preferences"]["is_against_bot"],
+                float(serialized_game["preferences"]["trench_density"]),
             ),
             trenches=frozenset(serialized_game["trenches"]),
         )
