@@ -14,7 +14,10 @@ class GamePreferences:
         return (
             isinstance(self.size, int)
             and isinstance(self.turn_count, int)
-            and isinstance(self.trench_density, float)
+            and (
+                isinstance(self.trench_density, int)
+                or isinstance(self.trench_density, float)
+            )
             and 3 <= self.size <= 12
             and 1 <= self.turn_count <= 7
             and 0 <= self.trench_density <= 1

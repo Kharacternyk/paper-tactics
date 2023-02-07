@@ -28,7 +28,7 @@ class DynamodbGameRepository(GameRepository):
             "turns-left": game.turns_left,
             "active-player": self._serialize_player(game.active_player),
             "passive-player": self._serialize_player(game.passive_player),
-            "preferences": asdict(game.preferences),
+            "preferences": serialized_preferences,
             "trenches": list(game.trenches),
             self._ttl_key: self._get_expiration_time(),
         }
