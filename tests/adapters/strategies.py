@@ -52,6 +52,7 @@ def _dynamodb_tables(draw):
                 "AttributeType": "S",
             }
         ],
+        BillingMode="PAY_PER_REQUEST",
     )
 
     return table_name, key, ttl_key, ttl_in_seconds

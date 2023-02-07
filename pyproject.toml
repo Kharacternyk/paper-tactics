@@ -1,10 +1,5 @@
-# FIXME Install moto
 [tool.pytest.ini_options]
-addopts = """
-    --testmon
-    --ignore tests/adapters/test_match_request_queues.py
-    --ignore tests/adapters/test_game_repositories.py
-"""
+addopts = "--testmon"
 
 [tool.coverage.run]
 branch = true
