@@ -41,8 +41,10 @@ class Game:
 
         if self.preferences.is_visibility_applied and me.can_win and opponent.can_win:
             opponent_units = opponent.units.intersection(me.visible)
+            opponent_walls = opponent.walls.intersection(me.visible)
         else:
             opponent_units = opponent.units
+            opponent_walls = opponent.walls
 
         if self.preferences.is_visibility_applied:
             trenches = self.trenches.intersection(me.visible)
@@ -63,7 +65,7 @@ class Game:
             ),
             opponent=PlayerView(
                 units=cast(frozenset[Cell], opponent_units),
-                walls=cast(frozenset[Cell], opponent.walls),
+                walls=cast(frozenset[Cell], opponent_walls),
                 reachable=frozenset(),
                 view_data=opponent.view_data.copy(),
                 is_gone=opponent.is_gone,
@@ -133,7 +135,9 @@ class Game:
             player.visible = {
                 cell
                 for cell in player.visible
-                if cell in opponent.units or cell in self.trenches
+                if cell in opponent.units
+                or cell in opponent.walls
+                or cell in self.trenches
             }
         sources = player.units.copy()
         while True:
