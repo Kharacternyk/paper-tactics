@@ -51,7 +51,9 @@ class DynamodbGameRepository(GameRepository):
                 serialized_game["preferences"]["is_against_bot"],
                 int(serialized_game["preferences"]["trench_density_percent"]),
             ),
-            trenches=frozenset(serialized_game["trenches"]),
+            trenches=frozenset(
+                (int(x), int(y)) for x, y in serialized_game["trenches"]
+            ),
         )
 
     def _serialize_player(self, player: Player) -> dict[str, Any]:

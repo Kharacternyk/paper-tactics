@@ -10,7 +10,10 @@ from paper_tactics.entities.player import Player
 
 @composite
 def game_preferences(
-    draw, is_against_bot=None, is_visibility_applied=None
+    draw,
+    is_against_bot=None,
+    is_visibility_applied=None,
+    trench_density_percent=None,
 ) -> GamePreferences:
     return GamePreferences(
         size=draw(integers(min_value=2, max_value=7)),
@@ -19,6 +22,9 @@ def game_preferences(
         if is_visibility_applied is None
         else is_visibility_applied,
         is_against_bot=draw(booleans()) if is_against_bot is None else is_against_bot,
+        trench_density_percent=draw(integers(min_value=0, max_value=100))
+        if trench_density_percent is None
+        else trench_density_percent,
     )
 
 
@@ -40,7 +46,9 @@ def players(draw) -> Player:
 def games(draw, shallow=False, is_visibility_applied=None, is_against_bot=None) -> Game:
     preferences = draw(
         game_preferences(
-            is_against_bot=is_against_bot, is_visibility_applied=is_visibility_applied
+            is_against_bot=is_against_bot,
+            is_visibility_applied=is_visibility_applied,
+            trench_density_percent=0 if shallow else None,
         )
     )
     turn_number = draw(integers(min_value=0, max_value=preferences.size**2 * 2))
