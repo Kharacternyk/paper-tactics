@@ -48,7 +48,7 @@ class DynamodbMatchRequestQueue(MatchRequestQueue):
             int(item["turn_count"]),
             item["is_visibility_applied"],
             item["is_against_bot"],
-            float(item["trench_density"]),
+            int(item["trench_density_percent"]),
         )
 
     def _get_expiration_time(self) -> int:

@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from typing import Final, Iterable, cast
-from random import random
+from random import randint
 
 from paper_tactics.entities.cell import Cell
 from paper_tactics.entities.game_bot import GameBot
@@ -160,7 +160,7 @@ class Game:
                 if (
                     (y < half - 1 or x < half)
                     and (x, y) != (0, 0)
-                    and random() <= self.preferences.trench_density
+                    and randint(1, 100) <= self.preferences.trench_density_percent
                 ):
                     yield x + 1, y + 1
                     yield size - x, size - y
