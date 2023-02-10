@@ -24,9 +24,9 @@ class Game:
         assert self.active_player.id != self.passive_player.id
         self.active_player.units.add((1, 1))
         self.passive_player.units.add((self.preferences.size, self.preferences.size))
+        self.trenches = frozenset(self._generate_trenches())
         self._rebuild_reachable_set(self.active_player, self.passive_player)
         self._rebuild_reachable_set(self.passive_player, self.active_player)
-        self.trenches = frozenset(self._generate_trenches())
         self.turns_left = self.preferences.turn_count
 
     def get_view(self, player_id: str) -> GameView:
