@@ -42,13 +42,10 @@ class Game:
         if self.preferences.is_visibility_applied and me.can_win and opponent.can_win:
             opponent_units = opponent.units.intersection(me.visible)
             opponent_walls = opponent.walls.intersection(me.visible)
+            trenches = self.trenches.intersection(me.visible)
         else:
             opponent_units = opponent.units
             opponent_walls = opponent.walls
-
-        if self.preferences.is_visibility_applied:
-            trenches = self.trenches.intersection(me.visible)
-        else:
             trenches = self.trenches
 
         return GameView(
