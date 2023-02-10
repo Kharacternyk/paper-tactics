@@ -40,9 +40,9 @@ class Game:
             raise ValueError("No such player")
 
         if self.preferences.is_visibility_applied and me.can_win and opponent.can_win:
-            opponent_units = opponent.units.intersection(me.visible)
-            opponent_walls = opponent.walls.intersection(me.visible)
-            trenches = self.trenches.intersection(me.visible)
+            opponent_units = opponent.units.intersection(me.visible_opponent)
+            opponent_walls = opponent.walls.intersection(me.visible_opponent)
+            trenches = self.trenches.intersection(me.visible_terrain)
         else:
             opponent_units = opponent.units
             opponent_walls = opponent.walls
@@ -91,6 +91,11 @@ class Game:
                 if self.is_valid_cell((x_, y_)) and (x_ != x or y_ != y):
                     yield x_, y_
 
+    def get_symmetric_cell(self, cell: Cell) -> Cell:
+        x, y = cell
+        s = self.preferences.size + 1
+        return s - x, s - y
+
     def is_valid_cell(self, cell: Cell) -> bool:
         x, y = cell
         return 1 <= x <= self.preferences.size and 1 <= y <= self.preferences.size
@@ -130,12 +135,10 @@ class Game:
     def _rebuild_reachable_set(self, player: Player, opponent: Player) -> None:
         player.reachable.clear()
         if self.preferences.is_visibility_applied:
-            player.visible = {
+            player.visible_opponent = {
                 cell
-                for cell in player.visible
-                if cell in opponent.units
-                or cell in opponent.walls
-                or cell in self.trenches
+                for cell in player.visible_opponent
+                if cell in opponent.units or cell in opponent.walls
             }
         sources = player.units.copy()
         while True:
@@ -143,7 +146,10 @@ class Game:
             for source in sources:
                 for cell in self.get_adjacent_cells(source):
                     if self.preferences.is_visibility_applied:
-                        player.visible.add(cell)
+                        player.visible_opponent.add(cell)
+                        if cell in self.trenches:
+                            player.visible_terrain.add(cell)
+                            player.visible_terrain.add(self.get_symmetric_cell(cell))
                     if cell in sources:
                         continue
                     if cell in player.walls:

@@ -10,7 +10,8 @@ class Player:
     units: set[Cell] = field(default_factory=set)
     walls: set[Cell] = field(default_factory=set)
     reachable: set[Cell] = field(default_factory=set)
-    visible: set[Cell] = field(default_factory=set)
+    visible_opponent: set[Cell] = field(default_factory=set)
+    visible_terrain: set[Cell] = field(default_factory=set)
     view_data: Final[dict[str, str]] = field(default_factory=dict)
     is_gone: bool = False
     is_defeated: bool = False
