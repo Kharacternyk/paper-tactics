@@ -1,7 +1,6 @@
 from dataclasses import asdict
 from time import time
 from typing import Any
-from decimal import Decimal
 
 import boto3
 
