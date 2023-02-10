@@ -61,7 +61,8 @@ class DynamodbGameRepository(GameRepository):
             "units": list(player.units),
             "walls": list(player.walls),
             "reachable": list(player.reachable),
-            "visible": list(player.visible),
+            "visible_opponent": list(player.visible_opponent),
+            "visible_terrain": list(player.visible_terrain),
             "is_gone": player.is_gone,
             "is_defeated": player.is_defeated,
             "view_data": player.view_data,
@@ -73,7 +74,10 @@ class DynamodbGameRepository(GameRepository):
             units=set((int(x), int(y)) for x, y in source["units"]),
             walls=set((int(x), int(y)) for x, y in source["walls"]),
             reachable=set((int(x), int(y)) for x, y in source["reachable"]),
-            visible=set((int(x), int(y)) for x, y in source["visible"]),
+            visible_opponent=set(
+                (int(x), int(y)) for x, y in source["visible_opponent"]
+            ),
+            visible_terrain=set((int(x), int(y)) for x, y in source["visible_terrain"]),
             is_gone=source["is_gone"],
             is_defeated=source["is_defeated"],
             view_data=source["view_data"],
