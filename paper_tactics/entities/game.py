@@ -130,7 +130,6 @@ class Game:
             player.walls.add(cell)
         else:
             player.units.add(cell)
-            player.visible_opponent.add(cell)
         self._rebuild_reachable_set(player, opponent)
 
     def _rebuild_reachable_set(self, player: Player, opponent: Player) -> None:
@@ -139,10 +138,8 @@ class Game:
             player.visible_opponent = {
                 cell
                 for cell in player.visible_opponent
-                if cell in opponent.units
-                or cell in opponent.walls
-                or cell in player.units
-            }
+                if cell in opponent.units or cell in opponent.walls
+            }.union(cell for cell in opponent.walls if cell not in self.trenches)
         sources = player.units.copy()
         while True:
             new_sources = set()
