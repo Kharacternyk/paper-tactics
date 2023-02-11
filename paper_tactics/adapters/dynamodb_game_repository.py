@@ -1,22 +1,17 @@
 from dataclasses import asdict
-from time import time
-from typing import Any
+from typing import Any, Iterable
 
 import boto3
 
+from paper_tactics.entities.cell import Cell
 from paper_tactics.entities.game import Game
 from paper_tactics.entities.game_preferences import GamePreferences
 from paper_tactics.entities.player import Player
+from paper_tactics.adapters.dynamodb_storage import DynamodbStorage
 from paper_tactics.ports.game_repository import GameRepository, NoSuchGameException
 
 
-class DynamodbGameRepository(GameRepository):
-    def __init__(self, table_name: str, key: str, ttl_key: str, ttl_in_seconds: int):
-        self._key = key
-        self._ttl_key = ttl_key
-        self._ttl_in_seconds = ttl_in_seconds
-        self._table = boto3.resource("dynamodb").Table(table_name)
-
+class DynamodbGameRepository(GameRepository, DynamodbStorage):
     def store(self, game: Game) -> None:
         serialized_game: dict[str, Any] = {
             self._key: game.id,
@@ -25,7 +20,7 @@ class DynamodbGameRepository(GameRepository):
             "passive-player": self._serialize_player(game.passive_player),
             "preferences": asdict(game.preferences),
             "trenches": list(game.trenches),
-            self._ttl_key: self._get_expiration_time(),
+            self._ttl_key: self.get_expiration_time(),
         }
 
         self._table.put_item(Item=serialized_game)
@@ -71,19 +66,15 @@ class DynamodbGameRepository(GameRepository):
     def _deserialize_player(self, source: dict[str, Any]) -> Player:
         return Player(
             id=source["id"],
-            units=set((int(x), int(y)) for x, y in source["units"]),
-            walls=set((int(x), int(y)) for x, y in source["walls"]),
-            reachable=set((int(x), int(y)) for x, y in source["reachable"]),
-            visible_opponent=set(
-                (int(x), int(y)) for x, y in source["visible_opponent"]
-            ),
-            visible_terrain=set((int(x), int(y)) for x, y in source["visible_terrain"]),
+            units=self._deserialize_cells(source["units"]),
+            walls=self._deserialize_cells(source["walls"]),
+            reachable=self._deserialize_cells(source["reachable"]),
+            visible_opponent=self._deserialize_cells(source["visible_opponent"]),
+            visible_terrain=self._deserialize_cells(source["visible_terrain"]),
             is_gone=source["is_gone"],
             is_defeated=source["is_defeated"],
             view_data=source["view_data"],
         )
 
-    def _get_expiration_time(self) -> int:
-        now = int(time())
-
-        return now + self._ttl_in_seconds
+    def _deserialize_cells(self, cells: Iterable[Cell]) -> set[Cell]:
+        return set((int(x), int(y)) for x, y in cells)
