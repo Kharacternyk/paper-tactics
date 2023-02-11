@@ -1,3 +1,6 @@
+from dataclasses import asdict
+import json
+
 import boto3
 
 from paper_tactics.entities.game import Game
@@ -18,7 +21,7 @@ class AwsApiGatewayPlayerNotifier(PlayerNotifier):
 
         try:
             self._client.post_to_connection(
-                Data=view.to_json().encode(),
+                Data=json.dumps(asdict(view), default=list),
                 ConnectionId=player_id,
             )
         except self._client.exceptions.GoneException:
