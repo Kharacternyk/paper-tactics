@@ -30,14 +30,13 @@ class Game:
         self.turns_left = self.preferences.turn_count
 
     def get_view(self, player_id: str) -> GameView:
+        assert player_id in (self.active_player.id, self.passive_player.id)
         if player_id == self.active_player.id:
             me = self.active_player
             opponent = self.passive_player
-        elif player_id == self.passive_player.id:
+        else:
             me = self.passive_player
             opponent = self.active_player
-        else:
-            raise ValueError("No such player")
 
         if self.preferences.is_visibility_applied and me.can_win and opponent.can_win:
             opponent_units = opponent.units.intersection(me.visible_opponent)
@@ -69,6 +68,7 @@ class Game:
                 is_defeated=opponent.is_defeated,
             ),
             trenches=trenches,
+            preferences=self.preferences,
         )
 
     def make_turn(self, player_id: str, cell: Cell) -> None:
@@ -84,40 +84,26 @@ class Game:
         self._make_turn(cell, self.active_player, self.passive_player)
         self._decrement_turns()
 
-    def get_adjacent_cells(self, cell: Cell) -> Iterable[Cell]:
-        x, y = cell
-        for x_ in (x - 1, x, x + 1):
-            for y_ in (y - 1, y, y + 1):
-                if self.is_valid_cell((x_, y_)) and (x_ != x or y_ != y):
-                    yield x_, y_
-
-    def get_symmetric_cell(self, cell: Cell) -> Cell:
-        x, y = cell
-        s = self.preferences.size + 1
-        return s - x, s - y
-
-    def is_valid_cell(self, cell: Cell) -> bool:
-        x, y = cell
-        return 1 <= x <= self.preferences.size and 1 <= y <= self.preferences.size
-
     def _decrement_turns(self) -> None:
         self.turns_left -= 1
         if not self.turns_left:
+            self.turns_left = self.preferences.turn_count
             if self.preferences.is_against_bot:
                 game_bot = GameBot()
-                for i in range(self.preferences.turn_count):
+                for _ in range(self.preferences.turn_count):
                     if not self.passive_player.reachable:
                         self.passive_player.is_defeated = True
                         break
                     cell = game_bot.make_turn(self.get_view(self.passive_player.id))
                     assert cell in self.passive_player.reachable
                     self._make_turn(cell, self.passive_player, self.active_player)
+                    self.turns_left -= 1
+                self.turns_left = self.preferences.turn_count
             else:
                 self.active_player, self.passive_player = (
                     self.passive_player,
                     self.active_player,
                 )
-            self.turns_left = self.preferences.turn_count
         if not self.active_player.reachable and not self.passive_player.is_defeated:
             self.active_player.is_defeated = True
 
@@ -144,12 +130,14 @@ class Game:
         while True:
             new_sources = set()
             for source in sources:
-                for cell in self.get_adjacent_cells(source):
+                for cell in self.preferences.get_adjacent_cells(source):
                     if self.preferences.is_visibility_applied:
                         player.visible_opponent.add(cell)
                         if cell in self.trenches:
                             player.visible_terrain.add(cell)
-                            player.visible_terrain.add(self.get_symmetric_cell(cell))
+                            player.visible_terrain.add(
+                                self.preferences.get_symmetric_cell(cell)
+                            )
                     if cell in sources:
                         continue
                     if cell in player.walls:
