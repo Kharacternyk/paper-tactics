@@ -66,10 +66,10 @@ def test_player_cannot_be_defeated_while_having_reachable_cells(game):
 @given(games(shallow=True, is_visibility_applied=True))
 def test_invisible_cells_are_unreachable(game):
     for player in game.active_player, game.passive_player:
-        assert not player.reachable.difference(player.visible)
+        assert not player.reachable.difference(player.visible_opponent)
 
 
 @given(games(shallow=True, is_visibility_applied=True))
 def test_reachable_cells_are_visible(game):
     for player in game.active_player, game.passive_player:
-        assert not player.reachable.difference(player.visible)
+        assert not player.reachable.difference(player.visible_opponent)
