@@ -8,9 +8,9 @@ from paper_tactics.entities.game_view import GameView
 @dataclass(frozen=True)
 class GameBot:
     # TODO not aggressive
-    neighbour_opponent_unit_weight: float = 50
+    neighbour_opponent_unit_weight: float = 10
     opponent_unit_weight: float = 7
-    trench_weight: float = 15
+    trench_weight: float = 5
     opponent_wall_weight: float = 0.3
     trap_weight: float = 0.05
     taunt_weight: float = 2
