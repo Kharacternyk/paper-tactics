@@ -1,6 +1,5 @@
-from typing import Iterable
-
 from dataclasses import dataclass
+from typing import Iterable
 
 from paper_tactics.entities.cell import Cell
 
@@ -12,6 +11,7 @@ class GamePreferences:
     is_visibility_applied: bool = False
     is_against_bot: bool = False
     trench_density_percent: int = 0
+    is_double_base: bool = False
 
     @property
     def valid(self) -> bool:

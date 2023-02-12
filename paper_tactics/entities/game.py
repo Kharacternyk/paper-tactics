@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
-from typing import Final, Iterable, cast
 from random import randint
+from typing import Final, Iterable, cast
 
 from paper_tactics.entities.cell import Cell
 from paper_tactics.entities.game_bot import GameBot
@@ -19,11 +19,9 @@ class Game:
     passive_player: Player = field(default_factory=Player)
     trenches: frozenset[Cell] = frozenset()
 
-    # FIXME rename
-    def init_players(self) -> None:
+    def init(self) -> None:
         assert self.active_player.id != self.passive_player.id
-        self.active_player.units.add((1, 1))
-        self.passive_player.units.add((self.preferences.size, self.preferences.size))
+        self._init_players()
         self.trenches = frozenset(self._generate_trenches())
         self._rebuild_reachable_set(self.active_player, self.passive_player)
         self._rebuild_reachable_set(self.passive_player, self.active_player)
@@ -148,6 +146,14 @@ class Game:
                 break
             sources.update(new_sources)
 
+    def _init_players(self) -> None:
+        edge = self.preferences.size
+        self.active_player.units.add((1, 1))
+        self.passive_player.units.add((edge, edge))
+        if self.preferences.is_double_base:
+            self.active_player.units.add((1, edge))
+            self.passive_player.units.add((edge, 1))
+
     def _generate_trenches(self) -> Iterable[Cell]:
         size = self.preferences.size
         half = (size + 1) // 2
@@ -155,7 +161,8 @@ class Game:
             for y in range(half):
                 if (
                     (y < half - 1 or x < half)
-                    and (x, y) != (0, 0)
+                    and (x + 1, y + 1) not in self.active_player.units
+                    and (x + 1, y + 1) not in self.passive_player.units
                     and randint(1, 100) <= self.preferences.trench_density_percent
                 ):
                     yield x + 1, y + 1

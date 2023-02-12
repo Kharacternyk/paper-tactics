@@ -1,8 +1,8 @@
 from dataclasses import asdict
+from decimal import Decimal
 from typing import Any, Optional, cast
 
 import boto3
-
 from paper_tactics.adapters.dynamodb_storage import DynamodbStorage
 from paper_tactics.entities.game_preferences import GamePreferences
 from paper_tactics.entities.match_request import MatchRequest
@@ -38,9 +38,8 @@ class DynamodbMatchRequestQueue(MatchRequestQueue, DynamodbStorage):
 
     def _parse_preferences(self, item: Any) -> GamePreferences:
         return GamePreferences(
-            int(item["size"]),
-            int(item["turn_count"]),
-            item["is_visibility_applied"],
-            item["is_against_bot"],
-            int(item["trench_density_percent"]),
+            **{
+                key: value if isinstance(value, bool) else int(value)
+                for key, value in item.items()
+            }
         )

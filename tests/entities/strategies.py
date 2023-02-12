@@ -1,7 +1,6 @@
 from dataclasses import replace
 
 from hypothesis.strategies import booleans, composite, dictionaries, integers, text
-
 from paper_tactics.entities.game import Game
 from paper_tactics.entities.game_preferences import GamePreferences
 from paper_tactics.entities.match_request import MatchRequest
@@ -14,6 +13,7 @@ def game_preferences(
     is_against_bot=None,
     is_visibility_applied=None,
     trench_density_percent=None,
+    is_double_base=None,
 ) -> GamePreferences:
     return GamePreferences(
         size=draw(integers(min_value=2, max_value=7)),
@@ -25,6 +25,7 @@ def game_preferences(
         trench_density_percent=draw(integers(min_value=0, max_value=100))
         if trench_density_percent is None
         else trench_density_percent,
+        is_double_base=draw(booleans()) if is_double_base is None else is_double_base,
     )
 
 
@@ -49,6 +50,7 @@ def games(draw, shallow=False, is_visibility_applied=None, is_against_bot=None) 
             is_against_bot=is_against_bot,
             is_visibility_applied=is_visibility_applied,
             trench_density_percent=0 if shallow else None,
+            is_double_base=False if shallow else None,
         )
     )
     turn_number = draw(integers(min_value=0, max_value=preferences.size**2 * 2))
@@ -71,7 +73,7 @@ def games(draw, shallow=False, is_visibility_applied=None, is_against_bot=None) 
             else passive_player,
         )
 
-    game.init_players()
+    game.init()
 
     for i in range(turn_number):
         if not game.active_player.can_win or not game.passive_player.can_win:

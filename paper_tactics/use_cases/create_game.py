@@ -41,7 +41,7 @@ def create_game(
         preferences=request.game_preferences,
     )
 
-    game.init_players()
+    game.init()
 
     try:
         player_notifier.notify(queued_request.id, game)
