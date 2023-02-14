@@ -46,7 +46,7 @@ def handler(event: dict[str, Any], context: Any) -> dict[str, int]:
         body = json.loads(event["body"])
         request = MatchRequest(
             event["requestContext"]["connectionId"],
-            body.get("viewData", {}),
+            body.get("view_data", {}),
             GamePreferences(**body.get("preferences", {})),
         )
     except Exception as e:
