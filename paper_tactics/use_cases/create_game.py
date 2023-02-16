@@ -7,7 +7,11 @@ from paper_tactics.entities.player import Player
 from paper_tactics.ports.game_repository import GameRepository
 from paper_tactics.ports.logger import Logger
 from paper_tactics.ports.match_request_queue import MatchRequestQueue
-from paper_tactics.ports.player_notifier import PlayerGoneException, PlayerNotifier
+from paper_tactics.ports.player_notifier import PlayerNotifier
+from paper_tactics.use_cases.notify_player import (
+    notify_active_player,
+    notify_passive_player,
+)
 
 
 def create_game(
@@ -43,15 +47,8 @@ def create_game(
 
     game.init()
 
-    try:
-        player_notifier.notify(queued_request.id, game)
-    except PlayerGoneException as e:
-        match_request_queue.put(request)
-        return logger.log_exception(e)
+    if not notify_active_player(player_notifier, game, logger):
+        return match_request_queue.put(request)
 
-    try:
-        player_notifier.notify(request.id, game)
-    except PlayerGoneException as e:
-        return logger.log_exception(e)
-
-    game_repository.store(game)
+    if notify_passive_player(player_notifier, game, logger):
+        game_repository.store(game)

@@ -12,7 +12,7 @@ from tests.use_cases.mocked_ports import (
 from tests.use_cases.strategies import player_notifiers
 
 
-@given(player_notifiers(), games(), booleans())
+@given(player_notifiers(), games(is_against_bot=False), booleans())
 def test_both_players_are_notified_when_someone_concedes(
     player_notifier: MockedPlayerNotifier, game: Game, is_conceding_player_active: bool
 ):
@@ -34,7 +34,7 @@ def test_both_players_are_notified_when_someone_concedes(
     )
 
 
-@given(player_notifiers(), games(), booleans())
+@given(player_notifiers(), games(is_against_bot=False), booleans())
 def test_conceding_player_is_considered_gone(
     player_notifier: MockedPlayerNotifier, game: Game, is_conceding_player_active: bool
 ):

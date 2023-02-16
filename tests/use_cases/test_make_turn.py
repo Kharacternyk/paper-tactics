@@ -61,8 +61,8 @@ def test_game_is_unmodified_if_passive_player_attempts_to_make_a_turn(
     assert game_repository.stored_games[game.id] == game
 
 
-@given(player_notifiers(), games(), data())
-def test_player_are_notified_when_a_valid_turn_is_made(
+@given(player_notifiers(), games(is_against_bot=False), data())
+def test_players_are_notified_when_a_valid_turn_is_made(
     player_notifier: MockedPlayerNotifier, game: Game, data
 ):
     game_repository = MockedGameRepository({game.id: game})

@@ -1,6 +1,10 @@
 from paper_tactics.ports.game_repository import GameRepository, NoSuchGameException
 from paper_tactics.ports.logger import Logger
-from paper_tactics.ports.player_notifier import PlayerGoneException, PlayerNotifier
+from paper_tactics.ports.player_notifier import PlayerNotifier
+from paper_tactics.use_cases.notify_player import (
+    notify_active_player,
+    notify_passive_player,
+)
 
 
 def concede(
@@ -19,10 +23,6 @@ def concede(
         if player.id == player_id:
             player.is_gone = True
 
-    for player in game.active_player, game.passive_player:
-        try:
-            player_notifier.notify(player.id, game)
-        except PlayerGoneException:
-            pass
-
+    notify_active_player(player_notifier, game, logger)
+    notify_passive_player(player_notifier, game, logger)
     game_repository.store(game)

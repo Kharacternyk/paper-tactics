@@ -1,6 +1,7 @@
 from dataclasses import replace
 
 from hypothesis.strategies import booleans, composite, dictionaries, integers, text
+
 from paper_tactics.entities.game import Game
 from paper_tactics.entities.game_preferences import GamePreferences
 from paper_tactics.entities.match_request import MatchRequest
@@ -30,11 +31,11 @@ def game_preferences(
 
 
 @composite
-def match_requests(draw) -> MatchRequest:
+def match_requests(draw, **kwargs) -> MatchRequest:
     return MatchRequest(
         id=draw(text(min_size=1)),
         view_data=draw(dictionaries(text(), text())),
-        game_preferences=draw(game_preferences()),
+        game_preferences=draw(game_preferences(**kwargs)),
     )
 
 

@@ -12,7 +12,7 @@ from tests.use_cases.mocked_ports import (
 from tests.use_cases.strategies import match_request_queues, player_notifiers
 
 
-@given(match_request_queues(), player_notifiers(), match_requests())
+@given(match_request_queues(), player_notifiers(), match_requests(is_against_bot=False))
 def test_game_is_stored_only_if_no_players_are_gone(
     match_request_queue: MockedMatchRequestQueue,
     player_notifier: MockedPlayerNotifier,

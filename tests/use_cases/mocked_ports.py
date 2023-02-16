@@ -3,6 +3,7 @@ from typing import Iterable, Optional
 
 from paper_tactics.entities.game import Game
 from paper_tactics.entities.game_preferences import GamePreferences
+from paper_tactics.entities.game_view import GameView
 from paper_tactics.entities.match_request import MatchRequest
 from paper_tactics.ports.game_repository import GameRepository, NoSuchGameException
 from paper_tactics.ports.logger import Logger
@@ -37,13 +38,13 @@ class MockedPlayerNotifier(PlayerNotifier):
         self.passive_player_is_gone = passive_player_is_gone
         self.notified_player_ids: list[str] = []
 
-    def notify(self, player_id: str, game: Game) -> None:
+    def notify(self, player_id: str, game_view: GameView) -> None:
         self.notified_player_ids.append(player_id)
         if (
             self.active_player_is_gone
-            and game.active_player.id == player_id
+            and game_view.my_turn
             or self.passive_player_is_gone
-            and game.passive_player.id == player_id
+            and not game_view.my_turn
         ):
             raise PlayerGoneException(player_id)
 
