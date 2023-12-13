@@ -5,9 +5,10 @@
       disableTests = _: { doCheck = false; };
       getPythonPkgs = pythonPkgs: builtins.attrValues {
         inherit (pythonPkgs)
-          bidict websockets nest-asyncio pytest docker
+          websockets nest-asyncio pytest docker
           pytest-testmon hypothesis coverage boto3;
         moto = pythonPkgs.moto.overridePythonAttrs disableTests;
+        bidict = pythonPkgs.bidict.overridePythonAttrs disableTests;
       };
       python = pkgs.python39.withPackages getPythonPkgs;
     in
