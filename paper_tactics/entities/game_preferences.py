@@ -12,6 +12,7 @@ class GamePreferences:
     is_against_bot: bool = False
     trench_density_percent: int = 0
     is_double_base: bool = False
+    code: str = ""
 
     @property
     def valid(self) -> bool:
@@ -19,6 +20,7 @@ class GamePreferences:
             isinstance(self.size, int)
             and isinstance(self.turn_count, int)
             and isinstance(self.trench_density_percent, int)
+            and isinstance(self.code, str)
             and 3 <= self.size <= 12
             and 1 <= self.turn_count <= 7
             and 0 <= self.trench_density_percent <= 100
