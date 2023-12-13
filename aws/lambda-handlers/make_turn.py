@@ -1,8 +1,6 @@
 import json
 from typing import Any, cast
 
-from aws_lambda_powertools.tracing import Tracer
-
 from paper_tactics.adapters.aws_api_gateway_player_notifier import (
     AwsApiGatewayPlayerNotifier,
 )
@@ -18,10 +16,8 @@ game_repository = DynamodbGameRepository(
     600,
 )
 logger = StdoutLogger()
-tracer = Tracer(service="make-turn")
 
 
-@tracer.capture_lambda_handler
 def handler(event: dict[str, Any], context: Any) -> dict[str, int]:
     player_notifier = AwsApiGatewayPlayerNotifier(
         "https://"
