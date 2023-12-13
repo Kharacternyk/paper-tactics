@@ -1,8 +1,6 @@
 from dataclasses import asdict
-from decimal import Decimal
 from typing import Any, Optional, cast
 
-import boto3
 from paper_tactics.adapters.dynamodb_storage import DynamodbStorage
 from paper_tactics.entities.game_preferences import GamePreferences
 from paper_tactics.entities.match_request import MatchRequest
