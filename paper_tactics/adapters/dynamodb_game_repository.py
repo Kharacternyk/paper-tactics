@@ -2,6 +2,7 @@ from dataclasses import asdict
 from typing import Any, Iterable
 
 import boto3
+
 from paper_tactics.adapters.dynamodb_storage import DynamodbStorage
 from paper_tactics.entities.cell import Cell
 from paper_tactics.entities.game import Game
@@ -39,7 +40,11 @@ class DynamodbGameRepository(GameRepository, DynamodbStorage):
             passive_player=self._deserialize_player(serialized_game["passive-player"]),
             preferences=GamePreferences(
                 **{
-                    key: value if isinstance(value, bool) else int(value)
+                    key: value
+                    if isinstance(value, bool)
+                    else str(value)
+                    if isinstance(value, str)
+                    else int(value)
                     for key, value in serialized_game["preferences"].items()
                 }
             ),
