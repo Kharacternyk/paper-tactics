@@ -112,6 +112,7 @@ class Game:
             self._rebuild_reachable_set(opponent, player)
         elif cell in self.trenches:
             player.walls.add(cell)
+            opponent.reachable.discard(cell)
         else:
             player.units.add(cell)
         self._rebuild_reachable_set(player, opponent)
