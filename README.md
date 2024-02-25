@@ -29,7 +29,3 @@ Entity tests require `pytest` and `hypothesis`.
 AWS adapter tests also require `docker`, `moto` and `boto3`.
 Most of the tests check a lot of random inputs (property based, `hypothesis`),
 so it's best to run them selectively.
-
-[![test coverage badge](https://codecov.io/gh/Kharacternyk/paper-tactics/branch/master/graph/badge.svg?token=UHEVAAVRLN)](https://codecov.io/gh/Kharacternyk/paper-tactics)
-
-[![test coverage graph](https://codecov.io/gh/Kharacternyk/paper-tactics/branch/master/graphs/tree.svg?token=UHEVAAVRLN)](https://codecov.io/gh/Kharacternyk/paper-tactics)
