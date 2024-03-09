@@ -156,6 +156,8 @@ class Game:
             self.passive_player.units.add((edge, 1))
 
     def _generate_trenches(self) -> Iterable[Cell]:
+        if not self.preferences.trench_density_percent:
+            return
         size = self.preferences.size
         half = (size + 1) // 2
         for x in range(size):
