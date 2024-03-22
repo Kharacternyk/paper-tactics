@@ -1,5 +1,8 @@
 # Paper Tactics
 
+This is the backend for www.paper-tactics.com.
+[The frontend is also open source.](https://github.com/Kharacternyk/paper-tactics-pwa)
+
 ## Architecture
 
 The application has borrowed the concepts of a _port_ and an _adapter_ from the
