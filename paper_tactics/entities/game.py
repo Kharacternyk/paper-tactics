@@ -149,11 +149,21 @@ class Game:
 
     def _init_players(self) -> None:
         edge = self.preferences.size
-        self.active_player.units.add((1, 1))
-        self.passive_player.units.add((edge, edge))
+        first_base_y = (
+            randint(1, (edge + 1) // 2)
+            if self.preferences.is_with_random_bases
+            else 1
+        )
+        second_base_y = (
+            randint(edge // 2 + 1, edge)
+            if self.preferences.is_with_random_bases
+            else 1
+        )
+        self.active_player.units.add((1, first_base_y))
+        self.passive_player.units.add((edge, edge - first_base_y + 1))
         if self.preferences.is_double_base:
-            self.active_player.units.add((1, edge))
-            self.passive_player.units.add((edge, 1))
+            self.active_player.units.add((1, second_base_y))
+            self.passive_player.units.add((edge, edge - second_base_y + 1))
 
     def _generate_trenches(self) -> Iterable[Cell]:
         if not self.preferences.trench_density_percent:

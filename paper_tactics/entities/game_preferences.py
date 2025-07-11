@@ -12,6 +12,7 @@ class GamePreferences:
     is_against_bot: bool = False
     trench_density_percent: int = 0
     is_double_base: bool = False
+    is_with_random_bases: bool = False
     code: str = ""
 
     @property
