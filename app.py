@@ -36,7 +36,7 @@ async def handler(websocket: WebSocketServerProtocol) -> None:
             return
 
         if event.get("action") == "create-game":
-            preferences = GamePreferences(**event.get("preferences", {}))
+            preferences = GamePreferences(**event["preferences"]) if event["preferences"] else None
             request = MatchRequest(uuid4().hex, event.get("view_data", {}), preferences)
             player_notifier.websockets[request.id] = websocket
             create_game(

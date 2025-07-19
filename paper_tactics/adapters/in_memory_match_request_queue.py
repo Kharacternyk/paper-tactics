@@ -12,12 +12,16 @@ class InMemoryMatchRequestQueue(MatchRequestQueue):
     def put(self, request: MatchRequest) -> None:
         self._match_requests.append(request)
 
-    def pop(self, game_preferences: GamePreferences) -> Optional[MatchRequest]:
+    def pop(
+        self, game_preferences: Optional[GamePreferences]
+    ) -> Optional[MatchRequest]:
         queued_request = next(
             (
                 request
                 for request in self._match_requests
                 if request.game_preferences == game_preferences
+                or not request.game_preferences
+                or not game_preferences
             ),
             None,
         )

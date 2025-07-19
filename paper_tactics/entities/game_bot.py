@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from random import choices
+from random import choice
 
 from paper_tactics.entities.cell import Cell
 from paper_tactics.entities.game_view import GameView
@@ -7,59 +7,59 @@ from paper_tactics.entities.game_view import GameView
 
 @dataclass(frozen=True)
 class GameBot:
-    # TODO not aggressive
-    neighbour_opponent_unit_weight: float = 10
-    opponent_unit_weight: float = 7
-    trench_weight: float = 5
-    opponent_wall_weight: float = 0.3
-    trap_weight: float = 0.05
-    taunt_weight: float = 2
-    diagonal_weight: float = 1.5
-    horizontal_weight: float = 1
-    discoverable_weight: float = 1
+    def most_discovered_territory(self, game_view: GameView) -> Cell:
+        max_discovered_cells = 0
+        best_cell = 0
+        for cell in game_view.me.reachable:
+            discovered_cells_for_this_cell = 0
+            for x, y in game_view.preferences.get_adjacent_cells(cell):
+                if (x, y) not in game_view.me.reachable:
+                    discovered_cells_for_this_cell += 1
+            if discovered_cells_for_this_cell > max_discovered_cells:
+                max_discovered_cells = discovered_cells_for_this_cell
+                best_cell = cell
+        return [best_cell, max_discovered_cells]
+    
+    def can_clear_opponent(self, game_view: GameView, cell: Cell, turns_left: int) -> bool:
+        amount_of_opponent_units = 0
+        for x, y in game_view.preferences.get_adjacent_cells(cell):
+            if (x, y) in game_view.opponent.units:
+                amount_of_opponent_units += 1
+        if turns_left > amount_of_opponent_units:
+            return True
+        return False
+        
+    def opponent_walls_near_cell(self, game_view: GameView, cell: Cell) -> bool:
+        for x, y in game_view.preferences.get_adjacent_cells(cell):
+            if (x, y) in game_view.opponent.walls:
+                return True
+        return False
+    
+    def reachable_opponent_units(self, game_view: GameView) -> list:
+        return list(game_view.me.reachable & game_view.opponent.units)
+    
+    def adjacent_opponent_units(self, game_view: GameView) -> list:
+        adjacent_opponent_units_list = []
+        for cell in game_view.opponent.units:
+            if any(cell_ in game_view.me.units for cell_ in game_view.preferences.get_adjacent_cells(cell)):
+                adjacent_opponent_units_list.append(cell)
+        return adjacent_opponent_units_list
 
-    def make_turn(self, game_view: GameView) -> Cell:
-        weights = [self._get_weight(cell, game_view) for cell in game_view.me.reachable]
-        return choices(list(game_view.me.reachable), weights)[0]
+    def make_turn(self, game_view: GameView, bot_turns_left) -> Cell:
+        aou = self.adjacent_opponent_units(game_view)
+        rou = self.reachable_opponent_units(game_view)
+        mdt = self.most_discovered_territory(game_view)
+        ownc = self.opponent_walls_near_cell(game_view, mdt)
+        cco = self.can_clear_opponent(game_view, mdt, bot_turns_left)
+        safe_cells = list(game_view.me.reachable - game_view.opponent.reachable)
+        if aou:
+            return choice(aou)
+        if rou:
+            return choice(rou)
+        if cco and not ownc:
+            return mdt
+        if safe_cells:
+            return choice(safe_cells)
+        return choice(game_view.me.reachable)
 
-    def _get_weight(self, cell: Cell, game_view: GameView) -> float:
-        if cell in game_view.opponent.units:
-            if any(
-                cell_ in game_view.me.units
-                for cell_ in game_view.preferences.get_adjacent_cells(cell)
-            ):
-                return self.neighbour_opponent_unit_weight
-            return self.opponent_unit_weight
 
-        if cell in game_view.trenches:
-            return self.trench_weight
-
-        if any(
-            cell_ in game_view.opponent.walls
-            for cell_ in game_view.preferences.get_adjacent_cells(cell)
-        ):
-            return self.opponent_wall_weight
-
-        opponent_count = sum(
-            1
-            for cell_ in game_view.preferences.get_adjacent_cells(cell)
-            if cell_ in game_view.opponent.units
-        )
-        if opponent_count >= game_view.turns_left:
-            return self.trap_weight
-        if opponent_count > 0:
-            return self.taunt_weight
-
-        if not game_view.preferences.is_visibility_applied:
-            x, y = cell
-            for cell_ in ((x, y + 1), (x, y - 1), (x + 1, y), (x - 1, y)):
-                if cell_ in game_view.me.walls or cell_ in game_view.me.units:
-                    return self.horizontal_weight
-            return self.diagonal_weight
-
-        discoverable_count = sum(
-            1
-            for cell_ in game_view.preferences.get_adjacent_cells(cell)
-            if cell_ not in game_view.me.reachable
-        )
-        return (discoverable_count + 1) * self.discoverable_weight

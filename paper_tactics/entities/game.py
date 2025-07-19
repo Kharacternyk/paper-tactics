@@ -60,7 +60,7 @@ class Game:
             opponent=PlayerView(
                 units=cast(frozenset[Cell], opponent_units),
                 walls=cast(frozenset[Cell], opponent_walls),
-                reachable=frozenset(),
+                reachable=cast(frozenset[Cell], opponent.reachable),
                 view_data=opponent.view_data.copy(),
                 is_gone=opponent.is_gone,
                 is_defeated=opponent.is_defeated,
@@ -79,7 +79,7 @@ class Game:
         ):
             raise IllegalTurnException(self.id, player_id, cell)
 
-        self._make_turn(cell, self.active_player, self.passive_player)
+        self._make_turn(cell, self.active_player, self.passive_player, self.turns_left)
         self._decrement_turns()
 
     def _decrement_turns(self) -> None:
@@ -92,8 +92,8 @@ class Game:
                     if not self.passive_player.reachable:
                         self.passive_player.is_defeated = True
                         break
-                    cell = game_bot.make_turn(self.get_view(self.passive_player.id))
-                    assert cell in self.passive_player.reachable
+                    cell = game_bot.make_turn(self.get_view(self.passive_player.id), self.turns_left)
+                    assert cell in self.passive_player.reachable, f"{cell} is an invalid turn"
                     self._make_turn(cell, self.passive_player, self.active_player)
                     self.turns_left -= 1
                 self.turns_left = self.preferences.turn_count
@@ -105,7 +105,7 @@ class Game:
         if not self.active_player.reachable and not self.passive_player.is_defeated:
             self.active_player.is_defeated = True
 
-    def _make_turn(self, cell: Cell, player: Player, opponent: Player) -> None:
+    def _make_turn(self, cell: Cell, player: Player, opponent: Player, turns_left: None) -> None:
         if cell in opponent.units:
             opponent.units.remove(cell)
             player.walls.add(cell)
