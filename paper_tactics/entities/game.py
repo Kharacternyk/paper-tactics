@@ -42,9 +42,17 @@ class Game:
             opponent_units = opponent.units.intersection(me.visible_opponent)
             opponent_walls = opponent.walls.intersection(me.visible_opponent)
             trenches = self.trenches.intersection(me.visible_terrain)
+
+            visible_opponent = Player(
+                units=opponent_units,
+                walls=opponent_walls,
+            )
+            self._rebuild_reachable_set(visible_opponent, me)
+            opponent_reachable = visible_opponent.reachable
         else:
             opponent_units = opponent.units
             opponent_walls = opponent.walls
+            opponent_reachable = opponent.reachable
             trenches = self.trenches
 
         return GameView(
@@ -62,7 +70,7 @@ class Game:
             opponent=PlayerView(
                 units=cast(frozenset[Cell], opponent_units),
                 walls=cast(frozenset[Cell], opponent_walls),
-                reachable=frozenset(),
+                reachable=cast(frozenset[Cell], opponent_reachable),
                 view_data=opponent.view_data.copy(),
                 is_gone=opponent.is_gone,
                 is_defeated=opponent.is_defeated,
