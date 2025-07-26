@@ -31,11 +31,15 @@ def create_game(
         queued_request = request
         request = MatchRequest(game_preferences=request.game_preferences)
     else:
-        queued_request = match_request_queue.pop(request.game_preferences)
+        while True:
+            queued_request = match_request_queue.pop(request.game_preferences)
 
-        if not queued_request or queued_request.id == request.id:
-            match_request_queue.put(request)
-            return
+            if not queued_request:
+                match_request_queue.put(request)
+                return
+
+            if queued_request.id != request.id:
+                break
 
     active_player = Player(id=queued_request.id, view_data=queued_request.view_data)
     passive_player = Player(id=request.id, view_data=request.view_data)
