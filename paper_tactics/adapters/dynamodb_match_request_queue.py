@@ -37,7 +37,7 @@ class DynamodbMatchRequestQueue(MatchRequestQueue, DynamodbStorage):
                 return MatchRequest(
                     cast(str, item[self._key]),
                     cast(dict[str, str], item["view_data"]),
-                    game_preferences,
+                    queued_preferences,
                 )
 
         return None
