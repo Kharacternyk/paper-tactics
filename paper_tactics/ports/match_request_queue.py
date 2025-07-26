@@ -11,5 +11,5 @@ class MatchRequestQueue(ABC):
         ...
 
     @abstractmethod
-    def pop(self, game_preferences: GamePreferences) -> Optional[MatchRequest]:
+    def pop(self, game_preferences: Optional[GamePreferences]) -> Optional[MatchRequest]:
         ...

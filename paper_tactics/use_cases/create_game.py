@@ -2,6 +2,7 @@ from typing import Optional
 from uuid import uuid4
 
 from paper_tactics.entities.game import Game
+from paper_tactics.entities.game_preferences import GamePreferences
 from paper_tactics.entities.match_request import MatchRequest
 from paper_tactics.entities.player import Player
 from paper_tactics.ports.game_repository import GameRepository
@@ -21,12 +22,12 @@ def create_game(
     logger: Logger,
     request: MatchRequest,
 ) -> None:
-    if not request.game_preferences.valid:
+    if request.game_preferences and not request.game_preferences.valid:
         return
 
     queued_request: Optional[MatchRequest]
 
-    if request.game_preferences.is_against_bot:
+    if request.game_preferences and request.game_preferences.is_against_bot:
         queued_request = request
         request = MatchRequest(game_preferences=request.game_preferences)
     else:
@@ -38,11 +39,18 @@ def create_game(
 
     active_player = Player(id=queued_request.id, view_data=queued_request.view_data)
     passive_player = Player(id=request.id, view_data=request.view_data)
+
+    preferences = request.game_preferences
+    if not preferences:
+        preferences = queued_request.game_preferences
+        if not preferences:
+            preferences = GamePreferences()
+
     game = Game(
         id=uuid4().hex,
         active_player=active_player,
         passive_player=passive_player,
-        preferences=request.game_preferences,
+        preferences=preferences,
     )
 
     game.init()

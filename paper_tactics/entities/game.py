@@ -102,8 +102,8 @@ class Game:
                     if not self.passive_player.reachable:
                         self.passive_player.is_defeated = True
                         break
-                    cell = game_bot.make_turn(self.get_view(self.passive_player.id))
-                    assert cell in self.passive_player.reachable
+                    cell = game_bot.make_turn(self.get_view(self.passive_player.id), self.turns_left)
+                    assert cell in self.passive_player.reachable, f"{cell} is an invalid turn"
                     self._make_turn(cell, self.passive_player, self.active_player)
                     self.turns_left -= 1
                 self.turns_left = self.preferences.turn_count
