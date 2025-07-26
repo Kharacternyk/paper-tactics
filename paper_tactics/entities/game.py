@@ -79,7 +79,7 @@ class Game:
         ):
             raise IllegalTurnException(self.id, player_id, cell)
 
-        self._make_turn(cell, self.active_player, self.passive_player, self.turns_left)
+        self._make_turn(cell, self.active_player, self.passive_player)
         self._decrement_turns()
 
     def _decrement_turns(self) -> None:
@@ -105,7 +105,7 @@ class Game:
         if not self.active_player.reachable and not self.passive_player.is_defeated:
             self.active_player.is_defeated = True
 
-    def _make_turn(self, cell: Cell, player: Player, opponent: Player, turns_left: None) -> None:
+    def _make_turn(self, cell: Cell, player: Player, opponent: Player) -> None:
         if cell in opponent.units:
             opponent.units.remove(cell)
             player.walls.add(cell)
