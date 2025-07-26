@@ -40,16 +40,12 @@ class DynamodbMatchRequestQueue(MatchRequestQueue, DynamodbStorage):
                     queued_preferences,
                 )
 
-        return None
-
     def _parse_preferences(self, item: Any) -> Optional[GamePreferences]:
         return (
             GamePreferences(
                 **{
                     key: value
-                    if isinstance(value, bool)
-                    else str(value)
-                    if isinstance(value, str)
+                    if isinstance(value, bool) or isinstance(value, str)
                     else int(value)
                     for key, value in item.items()
                 }
