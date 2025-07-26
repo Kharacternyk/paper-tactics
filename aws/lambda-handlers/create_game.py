@@ -47,7 +47,7 @@ def handler(event: dict[str, Any], context: Any) -> dict[str, int]:
         request = MatchRequest(
             event["requestContext"]["connectionId"],
             body.get("view_data", {}),
-            GamePreferences(**body.get("preferences", {})),
+            GamePreferences(**body["preferences"]) if body.get("preferences") is not None else None,
         )
     except Exception as e:
         logger.log_exception(e)
