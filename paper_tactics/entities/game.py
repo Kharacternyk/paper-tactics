@@ -21,6 +21,7 @@ class Game:
 
     def init(self) -> None:
         assert self.active_player.id != self.passive_player.id
+
         self._init_players()
         self.trenches = frozenset(self._generate_trenches())
         self._rebuild_reachable_set(self.active_player, self.passive_player)
@@ -29,6 +30,7 @@ class Game:
 
     def get_view(self, player_id: str) -> GameView:
         assert player_id in (self.active_player.id, self.passive_player.id)
+
         if player_id == self.active_player.id:
             me = self.active_player
             opponent = self.passive_player
@@ -40,9 +42,17 @@ class Game:
             opponent_units = opponent.units.intersection(me.visible_opponent)
             opponent_walls = opponent.walls.intersection(me.visible_opponent)
             trenches = self.trenches.intersection(me.visible_terrain)
+
+            visible_opponent = Player(
+                units=opponent_units,
+                walls=opponent_walls,
+            )
+            self._rebuild_reachable_set(visible_opponent, me)
+            opponent_reachable = visible_opponent.reachable
         else:
             opponent_units = opponent.units
             opponent_walls = opponent.walls
+            opponent_reachable = opponent.reachable
             trenches = self.trenches
 
         return GameView(
@@ -60,7 +70,7 @@ class Game:
             opponent=PlayerView(
                 units=cast(frozenset[Cell], opponent_units),
                 walls=cast(frozenset[Cell], opponent_walls),
-                reachable=cast(frozenset[Cell], opponent.reachable),
+                reachable=cast(frozenset[Cell], opponent_reachable),
                 view_data=opponent.view_data.copy(),
                 is_gone=opponent.is_gone,
                 is_defeated=opponent.is_defeated,
@@ -123,15 +133,19 @@ class Game:
 
     def _rebuild_reachable_set(self, player: Player, opponent: Player) -> None:
         player.reachable.clear()
+
         if self.preferences.is_visibility_applied:
             player.visible_opponent = {
                 cell
                 for cell in player.visible_opponent
                 if cell in opponent.units or cell in opponent.walls
             }.union(cell for cell in opponent.walls if cell not in self.trenches)
+
         sources = player.units.copy()
+
         while True:
             new_sources = set()
+
             for source in sources:
                 for cell in self.preferences.get_adjacent_cells(source):
                     if self.preferences.is_visibility_applied:
@@ -149,22 +163,20 @@ class Game:
                         player.reachable.add(cell)
             if not new_sources:
                 break
+
             sources.update(new_sources)
 
     def _init_players(self) -> None:
         edge = self.preferences.size
         first_base_y = (
-            randint(1, (edge + 1) // 2)
-            if self.preferences.is_with_random_bases
-            else 1
+            randint(1, (edge + 1) // 2) if self.preferences.is_with_random_bases else 1
         )
         second_base_y = (
-            randint(edge // 2 + 1, edge)
-            if self.preferences.is_with_random_bases
-            else 1
+            randint(edge // 2 + 1, edge) if self.preferences.is_with_random_bases else 1
         )
         self.active_player.units.add((1, first_base_y))
         self.passive_player.units.add((edge, edge - first_base_y + 1))
+
         if self.preferences.is_double_base:
             self.active_player.units.add((1, second_base_y))
             self.passive_player.units.add((edge, edge - second_base_y + 1))
@@ -172,8 +184,10 @@ class Game:
     def _generate_trenches(self) -> Iterable[Cell]:
         if not self.preferences.trench_density_percent:
             return
+
         size = self.preferences.size
         half = (size + 1) // 2
+
         for x in range(size):
             for y in range(half):
                 if (
