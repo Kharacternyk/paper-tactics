@@ -1,3 +1,5 @@
+from typing import Optional
+
 from paper_tactics.ports.game_repository import GameRepository, NoSuchGameException
 from paper_tactics.ports.logger import Logger
 from paper_tactics.ports.player_notifier import PlayerNotifier
@@ -11,7 +13,7 @@ def concede(
     game_repository: GameRepository,
     player_notifier: PlayerNotifier,
     logger: Logger,
-    game_id: str | None,
+    game_id: Optional[str],
     player_id: str,
 ) -> None:
     if not game_id:
