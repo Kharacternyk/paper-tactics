@@ -11,9 +11,12 @@ def concede(
     game_repository: GameRepository,
     player_notifier: PlayerNotifier,
     logger: Logger,
-    game_id: str,
+    game_id: str | None,
     player_id: str,
 ) -> None:
+    if not game_id:
+        return player_notifier.pong(player_id)
+
     try:
         game = game_repository.fetch(game_id)
     except NoSuchGameException as e:

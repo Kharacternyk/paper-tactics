@@ -1,6 +1,4 @@
 import asyncio
-from dataclasses import asdict
-import json
 
 from bidict import bidict
 from websockets.exceptions import ConnectionClosed
@@ -14,12 +12,10 @@ class WebsocketsPlayerNotifier(PlayerNotifier):
     def __init__(self) -> None:
         self.websockets: bidict[str, WebSocketServerProtocol] = bidict()
 
-    def notify(self, player_id: str, game_view: GameView) -> None:
+    def send(self, player_id: str, message: str):
         try:
             asyncio.get_event_loop().run_until_complete(
-                self.websockets[player_id].send(
-                    json.dumps(asdict(game_view), default=list)
-                )
+                self.websockets[player_id].send(message)
             )
         except ConnectionClosed:
             del self.websockets[player_id]
