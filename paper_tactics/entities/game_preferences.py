@@ -4,7 +4,7 @@ from typing import Iterable
 from paper_tactics.entities.cell import Cell
 
 
-@dataclass(frozen=True)
+@dataclass
 class GamePreferences:
     size: int = 10
     turn_count: int = 3
@@ -13,6 +13,7 @@ class GamePreferences:
     trench_density_percent: int = 0
     is_double_base: bool = False
     is_with_random_bases: bool = False
+    is_deathmatch: bool = False
     code: str = ""
 
     @property

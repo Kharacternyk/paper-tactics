@@ -13,7 +13,7 @@ from paper_tactics.entities.player_view import PlayerView
 @dataclass
 class Game:
     id: Final[str] = ""
-    preferences: Final[GamePreferences] = GamePreferences()
+    preferences: Final[GamePreferences] = field(default_factory=GamePreferences)
     turns_left: int = 0
     active_player: Player = field(default_factory=Player)
     passive_player: Player = field(default_factory=Player)
@@ -95,6 +95,8 @@ class Game:
     def _decrement_turns(self) -> None:
         self.turns_left -= 1
         if not self.turns_left:
+            if self.preferences.is_deathmatch:
+                self.preferences.turn_count += 1
             self.turns_left = self.preferences.turn_count
             if self.preferences.is_against_bot:
                 game_bot = GameBot()
@@ -106,6 +108,8 @@ class Game:
                     assert cell in self.passive_player.reachable, f"{cell} is an invalid turn"
                     self._make_turn(cell, self.passive_player, self.active_player)
                     self.turns_left -= 1
+                if self.preferences.is_deathmatch:
+                    self.preferences.turn_count += 1
                 self.turns_left = self.preferences.turn_count
             else:
                 self.active_player, self.passive_player = (
